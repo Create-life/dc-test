@@ -1,0 +1,8 @@
+{ "factorCode": "INDUSTRY",
+  "factorName": "行业",
+  "options": [
+    {"id":10000000001767, "name":"1类行业", "ratio":1.05},
+    {"id":10000000001768, "name":"2类行业", "ratio":1},
+    {"id":10000000001769, "name":"3类行业", "ratio":0.9}
+  ]
+}

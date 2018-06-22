@@ -1,0 +1,12 @@
+[
+  { "lgdId": 1, "level": "LGD1", "upperBound": 0.1, "midPoint": 0.05, "lowBound": -99999.0, "adjust": 2},
+  { "lgdId": 2, "level": "LGD2", "upperBound": 0.2, "midPoint": 0.15, "lowBound": 0.1, "adjust": 1 },
+  { "lgdId": 3, "level": "LGD3", "upperBound": 0.3, "midPoint": 0.25, "lowBound": 0.2, "adjust": 0 },
+  { "lgdId": 4, "level": "LGD4", "upperBound": 0.4, "midPoint": 0.35, "lowBound": 0.3, "adjust": 0 },
+  { "lgdId": 5, "level": "LGD5", "upperBound": 0.5, "midPoint": 0.45, "lowBound": 0.4, "adjust": 0 },
+  { "lgdId": 6, "level": "LGD6", "upperBound": 0.6, "midPoint": 0.55, "lowBound": 0.5, "adjust": 0 },
+  { "lgdId": 7, "level": "LGD7", "upperBound": 0.7, "midPoint": 0.65, "lowBound": 0.6, "adjust": 0 },
+  { "lgdId": 8, "level": "LGD8", "upperBound": 0.8, "midPoint": 0.75, "lowBound": 0.7, "adjust": 0 },
+  { "lgdId": 9, "level": "LGD9", "upperBound": 0.9, "midPoint": 0.85, "lowBound": 0.8, "adjust": 0 },
+  { "lgdId": 10, "level": "LGD10", "upperBound": 1.0, "midPoint": 0.95, "lowBound": 0.9, "adjust": 0 }
+]

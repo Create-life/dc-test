@@ -1,0 +1,9 @@
+{
+  "factorCode": "PLEDGE_REGION",
+  "factorName": "执法环境地区",
+  "options": [
+    { "id": 10000000001770, "name": "1类地区", "ratio": 1.0 },
+    { "id": 10000000001771, "name": "2类地区", "ratio": 0.9 },
+    { "id": 10000000001772, "name": "3类地区", "ratio": 0.8 }
+  ]
+}

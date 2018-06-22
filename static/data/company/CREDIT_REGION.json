@@ -1,0 +1,8 @@
+{ "factorCode": "CREDIT_REGION",
+  "factorName": "信用环境",
+  "options": [
+    {"id":10000000001773, "name":"1类地区", "ratio":1.05},
+    {"id":10000000001774, "name":"2类地区", "ratio":1},
+    {"id":10000000001775, "name":"3类地区", "ratio":0.95}
+  ]
+}
