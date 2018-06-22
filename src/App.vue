@@ -28,6 +28,7 @@
         <div class="form-group">
           <label>债券余额：</label>
           <input type="number" name="Company_nature" v-model="bondBalance"/>亿元
+          <span class="notice">{{bondBalance}}</span>
         </div>
         <!-- 债项类型 -->
         <div class="form-group" v-if="bondType">
@@ -35,6 +36,7 @@
           <select name="Company_nature" v-model="bondTypeRatio">
             <option :value="item.ratio" v-for="item in bondType.options" :key="item.id">{{item.name}}</option>
           </select>
+          <span class="notice">{{bondTypeRatio}}</span>
         </div>
       </div>
 
@@ -51,6 +53,7 @@
             <select name="Company_nature" v-model="company.companyNatureRatio">
               <option v-for="item in companyNature.options" :key="item.id" :value="item.ratio">{{item.name}}</option>
             </select>
+            <span class="notice">{{company.companyNatureRatio}}</span>
           </div>
           <!-- 发行人行业 -->
           <div class="form-group" v-if="industary">
@@ -58,6 +61,7 @@
             <select name="Company_nature" v-model="company.industaryRatio">
               <option v-for="item in industary.options" :key="item.id" :value="item.ratio">{{item.name}}</option>
             </select>
+            <span class="notice">{{company.industaryRatio}}</span>
           </div>
           <!-- 信用环境 -->
           <div class="form-group" v-if="creditRegion">
@@ -65,6 +69,7 @@
             <select name="Company_nature" v-model="company.creditRegionRatio">
               <option v-for="item in creditRegion.options" :key="item.id" :value="item.ratio">{{item.name}}</option>
             </select>
+            <span class="notice">{{company.creditRegionRatio}}</span>
           </div>
           <!-- 发行人评级 -->
           <div class="form-group" v-if="companyNum==1">
@@ -91,6 +96,7 @@
           <div class="form-group">
             <label>抵制押品金额：</label>
             <input type="number" name="Company_nature" v-model="pledge.pledgePrice"/>
+            <span class="notice">{{pledge.pledgePrice}}</span>
           </div>
           <!-- 抵质押品独立性 -->
           <div class="form-group" v-if="pledgeDepend">
@@ -98,6 +104,7 @@
             <select :name="'Company_nature' + index" v-model="pledge.pledgeDependRatio">
               <option v-for="item in pledgeDepend.options" :key="item.id" :value="item.ratio">{{item.name}}</option>
             </select>
+            <span class="notice">{{pledge.pledgeDependRatio}}</span>
           </div>
           <!-- 抵质押品类型 -->
           <div class="form-group" v-if="pledgeType">
@@ -105,6 +112,7 @@
             <select name="Company_nature" v-model="pledge.pledgeTypeRatio">
               <option v-for="item in pledgeType.options" :key="item.id" :value="item.ratio">{{item.name}}</option>
             </select>
+            <span class="notice">{{pledge.pledgeTypeRatio}}</span>
           </div>
           <!-- 抵质押品控制力 -->
           <div class="form-group" v-if="pledgeControl">
@@ -112,6 +120,7 @@
             <select name="Company_nature" v-model="pledge.pledgeControlRatio">
               <option v-for="item in pledgeControl.options" :key="item.id" :value="item.ratio">{{item.name}}</option>
             </select>
+            <span class="notice">{{pledge.pledgeControlRatio}}</span>
           </div>
           <!-- 抵质押品执法环境 -->
           <div class="form-group" v-if="pledgeRegion">
@@ -119,6 +128,7 @@
             <select name="Company_nature" v-model="pledge.pledgeRegionRatio">
               <option v-for="item in pledgeRegion.options" :key="item.id" :value="item.ratio">{{item.name}}</option>
             </select>
+            <span class="notice">{{pledge.pledgeRegionRatio}}</span>
           </div>
         </div>
       </div>
@@ -134,6 +144,7 @@
           <div class="form-group">
             <label>担保金额：</label>
             <input type="number" name="Company_nature" v-model="warrantor.warrantorPrice"/>
+            <span class="notice">{{warrantor.warrantorPrice}}</span>
           </div>
           <!-- 担保类型 -->
           <div class="form-group" v-if="guaranteeType">
@@ -141,6 +152,7 @@
             <select :name="'Company_nature' + index" v-model="warrantor.guaranteeTypeRatio">
               <option v-for="item in guaranteeType.options" :key="item.id" :value="item.ratio">{{item.name}}</option>
             </select>
+            <span class="notice">{{warrantor.guaranteeTypeRatio}}</span>
           </div>
           <!-- 担保人类型 -->
           <div class="form-group" v-if="warrantorType">
@@ -148,6 +160,7 @@
             <select name="Company_nature" v-model="warrantor.warrantorTypeRatio">
               <option v-for="item in warrantorType.options" :key="item.id" :value="item.ratio">{{item.name}}</option>
             </select>
+            <span class="notice">{{warrantor.warrantorTypeRatio}}</span>
           </div>
           <!-- 担保强度 -->
           <div class="form-group" v-if="warrantyStrength">
@@ -155,6 +168,7 @@
             <select name="Company_nature" v-model="warrantor.warrantyStrengthRatio">
               <option v-for="item in warrantyStrength.options" :key="item.id" :value="item.ratio">{{item.name}}</option>
             </select>
+            <span class="notice">{{warrantor.warrantyStrengthRatio}}</span>
           </div>
           <!-- 担保人评级 -->
           <div class="form-group" v-if="guarantorNum==1">
@@ -167,47 +181,49 @@
             <label>发行人违约率：</label>
             <input type="number" name="guarantorPd" v-model="warrantor.guarantorPd">%
           </div>
-
         </div>
       </div>
-      <div class="btn" @click="getResult">获取计算结果</div>
     </div>
 
-    <div class="result" v-if="LGDLevel" id="result">
-      <h3>查询结果：</h3>
-      <div class="form-group">
+    <div class="result" id="result">
+      <div class="btn" @click="getResult">获取计算结果</div>
+      <div v-if="LGDLevel">
+        <h3>计算结果：</h3>
+        <div class="form-group">
         <span>债项特征调整系数</span> ：<span style="color: red;">{{bondFeatureAdjustCoefficient}}</span>
+        </div>
+        <div class="form-group">
+          <span>债务人特征调整系数</span> ：<span style="color: red;">{{debtorFeatureAdjustCoefficient}}</span>
+        </div>
+        <div class="form-group">
+          <span>抵质押品缓释价值</span> ：<span style="color: red;">{{pledgeReleasePrice}}</span>
+        </div>
+        <div class="form-group">
+          <span>担保人缓释价值</span> ：<span style="color: red;">{{warrantorReleasePrice}}</span>
+        </div>
+        <div class="form-group">
+          <span>原始的基础回收率</span> ：<span style="color: red;">{{originalBasisRecoveryRate}}</span>
+        </div>
+        <div class="form-group">
+          <span>基础回收率</span> ：<span style="color: red;">{{basisRecoveryRate}}</span>
+        </div>
+        <div class="form-group">
+          <span>LGD值</span> ：<span style="color: red;">{{LGDValue}}</span>
+        </div>
+        <div class="form-group">
+          <span>LGD级别</span> ：<span style="color: red;">{{LGDLevel}}</span>
+        </div>
+        <div class="form-group">
+          <span>发行人基础评级</span> ：<span style="color: red;">{{companyBasisRating}}</span>
+        </div>
+        <div class="form-group">
+          <span>担保人有效评级</span> ：<span style="color: red;">{{guaranterRating}}</span>
+        </div>
+        <div class="form-group">
+          <span>最终评级</span> ：<span style="color: red;">{{finallyRating}}</span>
+        </div>
       </div>
-      <div class="form-group">
-        <span>债务人特征调整系数</span> ：<span style="color: red;">{{debtorFeatureAdjustCoefficient}}</span>
-      </div>
-      <div class="form-group">
-        <span>抵质押品缓释价值</span> ：<span style="color: red;">{{pledgeReleasePrice}}</span>
-      </div>
-      <div class="form-group">
-        <span>担保人缓释价值</span> ：<span style="color: red;">{{warrantorReleasePrice}}</span>
-      </div>
-      <div class="form-group">
-        <span>原始的基础回收率</span> ：<span style="color: red;">{{originalBasisRecoveryRate}}</span>
-      </div>
-      <div class="form-group">
-        <span>基础回收率</span> ：<span style="color: red;">{{basisRecoveryRate}}</span>
-      </div>
-      <div class="form-group">
-        <span>LGD值</span> ：<span style="color: red;">{{LGDValue}}</span>
-      </div>
-      <div class="form-group">
-        <span>LGD级别</span> ：<span style="color: red;">{{LGDLevel}}</span>
-      </div>
-      <div class="form-group">
-        <span>发行人基础评级</span> ：<span style="color: red;">{{companyBasisRating}}</span>
-      </div>
-      <div class="form-group">
-        <span>担保人有效评级</span> ：<span style="color: red;">{{guaranterRating}}</span>
-      </div>
-      <div class="form-group">
-        <span>最终评级</span> ：<span style="color: red;">{{finallyRating}}</span>
-      </div>
+
     </div>
   </div>
 </template>
@@ -533,7 +549,7 @@ a {
 }
 .left {
   float: left;
-  width: 50%;
+  width: 65%;
 }
 .btn {
   width: 150px;
@@ -547,7 +563,12 @@ a {
   color: #fff;
 }
 .result {
+  width: 450px;
   position: fixed;
-  right: 100px;
+  right: 0;
+}
+.notice {
+  margin-left: 10px;
+  color: blue;
 }
 </style>
