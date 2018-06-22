@@ -1,6 +1,6 @@
 {
   "factorCode": "PLEDGE_TYPE",
-  "factorName": "抵质押品类型",
+  "factorName": "抵质押类型",
   "options": [
 
     { "id": 10000000001709, "name":   "位于一线城市的住宅用地土地使用权;商业用地土地使用权;商住用地土地使用权", "ratio": 0.7 },

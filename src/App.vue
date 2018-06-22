@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="left">
-      <h2>单发行人无抵押无担保场景：</h2>
+      <h2>债项模型计算：</h2>
 
       <div>
         <h3 style="display: inline-block;">选择场景：</h3>
@@ -68,7 +68,7 @@
           </div>
           <!-- 发行人评级 -->
           <div class="form-group" v-if="companyNum==1">
-            <label>发行人评级：</label>
+            <label>发行人有效认定评级：</label>
             <select name="Company_nature" v-model="companyScale">
               <option v-for="item in scaleList" :key="item.id" :value="item.id">{{item.rating}}</option>
             </select>
@@ -89,7 +89,7 @@
         <div v-for="(pledge, index) in pledgeList" :key="index" >
           <h4 style="margin-top: 10px;">抵质押品{{index+1}}</h4>
           <div class="form-group">
-            <label>抵制押品金额：</label>
+            <label>抵制押金额：</label>
             <input type="number" name="Company_nature" v-model="pledge.pledgePrice"/>
           </div>
           <!-- 抵质押品独立性 -->
@@ -158,7 +158,7 @@
           </div>
           <!-- 担保人评级 -->
           <div class="form-group" v-if="guarantorNum==1">
-            <label>担保人评级 ：</label>
+            <label>担保人有效认定评级 ：</label>
             <select v-model="guarantorScale">
               <option v-for="item in scaleList" :key="item.id" :value="item.id">{{item.rating}}</option>
             </select>
@@ -174,7 +174,7 @@
     </div>
 
     <div class="result" v-if="LGDLevel" id="result">
-      <h3>查询结果：</h3>
+      <h3>计算结果：</h3>
       <div class="form-group">
         <span>债项特征调整系数</span> ：<span style="color: red;">{{bondFeatureAdjustCoefficient}}</span>
       </div>
@@ -200,13 +200,13 @@
         <span>LGD级别</span> ：<span style="color: red;">{{LGDLevel}}</span>
       </div>
       <div class="form-group">
-        <span>发行人基础评级</span> ：<span style="color: red;">{{companyBasisRating}}</span>
+        <span>债券基础评级</span> ：<span style="color: red;">{{companyBasisRating}}</span>
       </div>
       <div class="form-group">
         <span>担保人有效评级</span> ：<span style="color: red;">{{guaranterRating}}</span>
       </div>
       <div class="form-group">
-        <span>最终评级</span> ：<span style="color: red;">{{finallyRating}}</span>
+        <span>债券最终评级</span> ：<span style="color: red;">{{finallyRating}}</span>
       </div>
     </div>
   </div>
@@ -396,11 +396,11 @@ export default {
       this.getLGDValue();
       // LGD映射
       this.getLGDLevel();
-      // 发行人基础评级
+      // 债券基础评级
       this.getCompanyBasisRating();
       // 担保人有效评级
       this.getGuaranterRating();
-      // 最终评级
+      // 债券最终评级
       this.getFinallyRating();
     },
     // 债项特征调整系数:等于债项类型
