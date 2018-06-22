@@ -223,36 +223,6 @@
           <span>最终评级</span> ：<span style="color: red;">{{finallyRating}}</span>
         </div>
       </div>
-      <div class="form-group">
-        <span>债务人特征调整系数</span> ：<span style="color: red;">{{debtorFeatureAdjustCoefficient}}</span>
-      </div>
-      <div class="form-group">
-        <span>抵质押品缓释价值</span> ：<span style="color: red;">{{pledgeReleasePrice}}</span>
-      </div>
-      <div class="form-group">
-        <span>担保人缓释价值</span> ：<span style="color: red;">{{warrantorReleasePrice}}</span>
-      </div>
-      <div class="form-group">
-        <span>原始的基础回收率</span> ：<span style="color: red;">{{originalBasisRecoveryRate}}</span>
-      </div>
-      <div class="form-group">
-        <span>基础回收率</span> ：<span style="color: red;">{{basisRecoveryRate}}</span>
-      </div>
-      <div class="form-group">
-        <span>LGD值</span> ：<span style="color: red;">{{LGDValue}}</span>
-      </div>
-      <div class="form-group">
-        <span>LGD级别</span> ：<span style="color: red;">{{LGDLevel}}</span>
-      </div>
-      <div class="form-group">
-        <span>债券基础评级</span> ：<span style="color: red;">{{companyBasisRating}}</span>
-      </div>
-      <div class="form-group">
-        <span>担保人有效评级</span> ：<span style="color: red;">{{guaranterRating}}</span>
-      </div>
-      <div class="form-group">
-        <span>债券最终评级</span> ：<span style="color: red;">{{finallyRating}}</span>
-      </div>
     </div>
   </div>
 </template>
