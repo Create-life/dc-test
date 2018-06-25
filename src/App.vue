@@ -214,7 +214,7 @@
           <span>LGD级别</span> ：<span style="color: red;">{{LGDLevel}}</span>
         </div>
         <div class="form-group">
-          <span>发行人基础评级</span> ：<span style="color: red;">{{companyBasisRating}}</span>
+          <span>债券基础评级</span> ：<span style="color: red;">{{companyBasisRating}}</span>
         </div>
         <div class="form-group">
           <span>担保人有效评级</span> ：<span style="color: red;">{{guaranterRating}}</span>
@@ -280,7 +280,7 @@ export default {
       LGDValue: null, // LGD值
       LGDLevel: null, // LGD级别
 
-      companyBasisRating: null, // 发行人基础评级
+      companyBasisRating: null, // 债券基础评级
       guaranterRating: null, // 担保人有效评级
       finallyRating: null, // 最终评级
     };
@@ -476,7 +476,7 @@ export default {
         }
       }
     },
-    // 发行人基础评级
+    // 债券基础评级
     getCompanyBasisRating() {
       var LGDObj = this.LGDRules.filter(it => {
           return it.level===this.LGDLevel
@@ -517,15 +517,11 @@ export default {
           return averagePd > it.minValue && averagePd <= it.maxValue;
         })[0].id;
       }
-
-      var temp = this.guarantorScale - LGDObj.adjust;
-      if (temp < 1) {
-        temp = 1;
-      }
       this.guaranterRating = this.scaleList.filter(it => {
-        return it.id === temp
+        return it.id === this.guarantorScale
       })[0].rating;
     },
+    // 最终评级
     getFinallyRating() {
       var companyScale = this.scaleList.filter(it => {
         return it.rating == this.companyBasisRating
