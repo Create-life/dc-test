@@ -1,274 +1,370 @@
 <template>
   <div class="container">
-    <div class="left">
-      <h2>债项模型计算：</h2>
-
-      <div>
-        <h3 style="display: inline-block;">选择场景：</h3>
-        <div>
-          <div>
-            <label>发行人数量：</label>
-            <input type="number" name="companyNum" v-model="companyNum" @change="modelChange">
-          </div>
-          <div style="margin-top: 10px;">
-            <label>担保人数量：</label>
-            <input type="number" name="guarantorNum" v-model="guarantorNum" @change="modelChange">
-          </div>
-          <div style="margin-top: 10px;">
-            <label>抵质押品数量：</label>
-            <input type="number" name="pledgeNum" v-model="pledgeNum" @change="modelChange" style="margin-right: 20px;" >
-          </div>
+    <h2>债项模型计算</h2>
+    <b-navbar type="dark" class="nav-info" variant="info">
+      <div class="col-md-2 nav_item t-center">{{isCheck?'当前场景':'场景选择：'}}</div>
+      <div class="col-md-9 nav_item row">
+        <div class="col-md-4">
+          <b-form-input v-show="!isCheck" placeholder="发行人数量" class="nav_input" type="number" name="companyNum" v-model="companyNum"></b-form-input>
+          <span v-show="isCheck">发行人数量：<span class="notice">{{companyNum}}</span></span>
+        </div>
+        <div class="col-md-4">
+          <b-form-input v-show="!isCheck" placeholder="担保人数量" type="number" name="guarantorNum" v-model="guarantorNum"></b-form-input>
+          <span v-show="isCheck">担保人数量：<span class="notice">{{guarantorNum}}</span></span>
+        </div>
+        <div class="col-md-4">
+          <b-form-input v-show="!isCheck" placeholder="抵质押品数量" type="number" name="pledgeNum" v-model="pledgeNum"></b-form-input>
+          <span v-show="isCheck">抵质押品数量：<span class="notice">{{pledgeNum}}</span></span>
         </div>
       </div>
-      <hr style="margin-top: 20px;">
+      <div class="col-md-1">
+        <b-button v-show="!isCheck" @click="checkSelect" variant="primary">确定</b-button>
+        <b-button v-show="isCheck" @click="reset" variant="secondary">重置</b-button>
+      </div>
+    </b-navbar>
 
-      <!-- 债项信息 -->
-      <div>
-        <h3>债项信息</h3>
-        <div class="form-group">
+    <!-- 债项信息 -->
+    <b-navbar class="bond-info enter-list" v-if="bondTypeList">
+      <div class="col-md-2 nav_item t-center">债项信息：</div>
+      <div class="col-md-9 nav_item row" v-show="!bondTypeCheck">
+        <div class="col-md-4">
           <label>债券余额：</label>
-          <input type="number" name="Company_nature" v-model="bondBalance"/>亿元
-          <span class="notice">{{bondBalance}}</span>
+          <b-form-input class="nav_input" type="number"  name="Company_nature" v-model="bondBalance"></b-form-input>
+          <label>亿元</label>
         </div>
-        <!-- 债项类型 -->
-        <div class="form-group" v-if="bondType">
-          <label>{{bondType.factorName}}：</label>
-          <select name="Company_nature" v-model="bondTypeRatio">
-            <option :value="item.ratio" v-for="item in bondType.options" :key="item.id">{{item.name}}</option>
-          </select>
-          <span class="notice">{{bondTypeRatio}}</span>
+        <div class="col-md-8">
+          <label>债项类型：</label>
+          <b-form-select v-model="bondType" :options="bondTypeList.options" />
+          <span class="notice">{{bondType.ratio}}</span>
         </div>
       </div>
+      <div class="col-md-9 nav_item row" v-if="bondType" v-show="bondTypeCheck">
+        <div class="col-md-4">
+          <span>债券余额：</span>
+          <span class="notice">{{bondBalance?bondBalance:'-'}}</span>
+          <span>亿元</span>
+        </div>
+        <div class="col-md-8">
+          <label>债项类型：</label>
+          <span class="text-overflow">{{bondType.name}}</span>
+          <span class="notice">{{bondType.ratio}}</span>
+        </div>
+      </div>
+      <div class="col-md-1">
+        <b-button variant="outline-primary" v-show="!bondTypeCheck" @click="checkBondType">确定</b-button>
+        <b-button variant="outline-secondary" v-show="bondTypeCheck" @click="resetBondType">重置</b-button>
+      </div>
+    </b-navbar>
 
-      <!-- 发行人信息 -->
-      <div>
-        <hr style="margin-top: 20px;">
-        <h3>发行人信息</h3>
-        <!-- 发行人列表 -->
-        <div v-for="(company, index) in companyList" :key="index" >
-          <h4 style="margin-top: 10px;">发行人{{index+1}}</h4>
-          <!-- 企业性质 -->
-          <div class="form-group" v-if="companyNature">
-            <label>{{companyNature.factorName}}：</label>
-            <select name="Company_nature" v-model="company.companyNatureRatio">
-              <option v-for="item in companyNature.options" :key="item.id" :value="item.ratio">{{item.name}}</option>
-            </select>
-            <span class="notice">{{company.companyNatureRatio}}</span>
+    <!-- 发行人信息 -->
+    <b-navbar class="company-info enter-list" v-b-modal="`company${idx}`" v-if="companyList.length>0" v-for="(company, idx) in companyList" :key="company.id">
+      <div class="col-md-2 nav_item t-center">发行人信息{{companyNum>1?idx+1:''}}：</div>
+      <div class="col-md-10 nav_item info">
+        <div class="row">
+          <div class="col-md-6 flex">
+            <label>{{companyNatureList.factorName}}：</label>
+            <span class="text-overflow" :title="company.companyNature.name">{{company.companyNature.name}}</span>
+            <span class="notice">{{company.companyNature.ratio}}</span>
           </div>
-          <!-- 发行人行业 -->
-          <div class="form-group" v-if="industary">
-            <label>{{industary.factorName}}：</label>
-            <select name="Company_nature" v-model="company.industaryRatio">
-              <option v-for="item in industary.options" :key="item.id" :value="item.ratio">{{item.name}}</option>
-            </select>
-            <span class="notice">{{company.industaryRatio}}</span>
+          <div class="col-md-6 flex">
+            <label>{{industaryList.factorName}}：</label>
+            <span class="text-overflow" :title="company.industary.name">{{company.industary.name}}</span>
+            <span class="notice">{{company.industary.ratio}}</span>
           </div>
-          <!-- 信用环境 -->
-          <div class="form-group" v-if="creditRegion">
-            <label>{{creditRegion.factorName}}：</label>
-            <select name="Company_nature" v-model="company.creditRegionRatio">
-              <option v-for="item in creditRegion.options" :key="item.id" :value="item.ratio">{{item.name}}</option>
-            </select>
-            <span class="notice">{{company.creditRegionRatio}}</span>
+          <div class="col-md-6 flex">
+            <label>{{creditRegionList.factorName}}：</label>
+            <span class="text-overflow" :title="company.creditRegion.name">{{company.creditRegion.name}}</span>
+            <span class="notice">{{company.creditRegion.ratio}}</span>
           </div>
-          <!-- 发行人评级 -->
-          <div class="form-group" v-if="companyNum==1">
+          <div class="col-md-6 flex" v-if="companyNum==1">
             <label>发行人有效认定评级：</label>
-            <select name="Company_nature" v-model="companyScale">
-              <option v-for="item in scaleList" :key="item.id" :value="item.id">{{item.rating}}</option>
-            </select>
+            <span class="notice">{{company.companyRating.rating}}</span>
           </div>
-          <div class="form-group" v-if="companyNum>1">
+          <div class="col-md-6 flex" v-if="companyNum>1">
             <label>发行人违约率：</label>
-            <input type="number" name="companyPd" v-model="company.companyPd">%
-          </div>
-
-        </div>
-      </div>
-
-      <!-- 抵质押品信息 -->
-      <div v-if="pledgeList.length > 0">
-        <hr style="margin-top: 20px;">
-        <h3>抵质押品信息</h3>
-        <!-- 抵质押品列表 -->
-        <div v-for="(pledge, index) in pledgeList" :key="index" >
-          <h4 style="margin-top: 10px;">抵质押品{{index+1}}</h4>
-          <div class="form-group">
-            <label>抵制押金额：</label>
-            <input type="number" name="Company_nature" v-model="pledge.pledgePrice"/>
-            <span class="notice">{{pledge.pledgePrice}}</span>
-          </div>
-          <!-- 抵质押品独立性 -->
-          <div class="form-group" v-if="pledgeDepend">
-            <label>{{pledgeDepend.factorName}}：</label>
-            <select :name="'Company_nature' + index" v-model="pledge.pledgeDependRatio">
-              <option v-for="item in pledgeDepend.options" :key="item.id" :value="item.ratio">{{item.name}}</option>
-            </select>
-            <span class="notice">{{pledge.pledgeDependRatio}}</span>
-          </div>
-          <!-- 抵质押品类型 -->
-          <div class="form-group" v-if="pledgeType">
-            <label>{{pledgeType.factorName}}：</label>
-            <select name="Company_nature" v-model="pledge.pledgeTypeRatio">
-              <option v-for="item in pledgeType.options" :key="item.id" :value="item.ratio">{{item.name}}</option>
-            </select>
-            <span class="notice">{{pledge.pledgeTypeRatio}}</span>
-          </div>
-          <!-- 抵质押品控制力 -->
-          <div class="form-group" v-if="pledgeControl">
-            <label>{{pledgeControl.factorName}}：</label>
-            <select name="Company_nature" v-model="pledge.pledgeControlRatio">
-              <option v-for="item in pledgeControl.options" :key="item.id" :value="item.ratio">{{item.name}}</option>
-            </select>
-            <span class="notice">{{pledge.pledgeControlRatio}}</span>
-          </div>
-          <!-- 抵质押品执法环境 -->
-          <div class="form-group" v-if="pledgeRegion">
-            <label>{{pledgeRegion.factorName}}：</label>
-            <select name="Company_nature" v-model="pledge.pledgeRegionRatio">
-              <option v-for="item in pledgeRegion.options" :key="item.id" :value="item.ratio">{{item.name}}</option>
-            </select>
-            <span class="notice">{{pledge.pledgeRegionRatio}}</span>
+            <span class="notice">{{company.companyPd?company.companyPd:'-'}}%</span>
           </div>
         </div>
       </div>
+      <!-- 发行人模态框 -->
+      <b-modal ref="companyModal" centered :id="`company${idx}`" hide-footer size="lg" :title="`发行人${companyNum>1?idx + 1:''}信息修改`">
+        <p class="my-1 flex">
+          <label>{{companyNatureList.factorName}}：</label>
+          <b-form-select v-model="company.companyNature" :options="companyNatureList.options" />
+          <span class="notice">{{company.companyNature.ratio}}</span>
+        </p>
+        <p class="my-1 flex">
+          <label>{{industaryList.factorName}}：</label>
+          <b-form-select v-model="company.industary" :options="industaryList.options" />
+          <span class="notice">{{company.industary.ratio}}</span>
+        </p>
+        <p class="my-1 flex">
+          <label>{{creditRegionList.factorName}}：</label>
+          <b-form-select v-model="company.creditRegion" :options="creditRegionList.options" />
+          <span class="notice">{{company.creditRegion.ratio}}</span>
+        </p>
+        <p class="my-1 flex" v-if="companyList.length==1">
+          <label>发行人有效认定评级：</label>
+          <b-form-select v-model="company.companyRating" :options="scaleList" />
+          <span class="notice"></span>
+        </p>
+        <p class="my-1 flex" v-if="companyList.length>1">
+          <label>发行人违约率：</label>
+          <b-form-input type="number" name="companyPd" v-model="company.companyPd"></b-form-input>
+          <span class="notice"></span>
+        </p>
+        <b-btn class="mt-3" variant="outline-success" block @click="hideCompanyModal(idx)">OK</b-btn>
+      </b-modal>
+    </b-navbar>
 
-      <!-- 担保人信息 -->
-      <div v-if="warrantorList.length > 0">
-        <hr style="margin-top: 20px;">
-        <h3>担保人信息</h3>
-        <!-- 担保人列表 -->
-        <div v-for="(warrantor, index) in warrantorList" :key="index" >
-          <h4 style="margin-top: 10px;">担保人{{index+1}}</h4>
-          <!-- 担保金额 -->
-          <div class="form-group">
+    <!-- 担保人信息 -->
+    <b-navbar class="guarantor-info enter-list" v-b-modal="`warrantor${idx}`" v-if="warrantorList.length>0" v-for="(warrantor, idx) in warrantorList" :key="warrantor.id">
+      <div class="col-md-2 nav_item t-center">担保人信息{{guarantorNum>1?idx+1:''}}：</div>
+      <div class="col-md-10 nav_item info">
+        <div class="row">
+
+          <div class="col-md-3 flex">
             <label>担保金额：</label>
-            <input type="number" name="Company_nature" v-model="warrantor.warrantorPrice"/>
-            <span class="notice">{{warrantor.warrantorPrice}}</span>
+            <span class="notice">{{warrantor.warrantorPrice?warrantor.warrantorPrice:'-'}}</span>
+            <span>亿元</span>
           </div>
-          <!-- 担保类型 -->
-          <div class="form-group" v-if="guaranteeType">
-            <label>{{guaranteeType.factorName}}：</label>
-            <select :name="'Company_nature' + index" v-model="warrantor.guaranteeTypeRatio">
-              <option v-for="item in guaranteeType.options" :key="item.id" :value="item.ratio">{{item.name}}</option>
-            </select>
-            <span class="notice">{{warrantor.guaranteeTypeRatio}}</span>
-          </div>
-          <!-- 担保人类型 -->
-          <div class="form-group" v-if="warrantorType">
-            <label>{{warrantorType.factorName}}：</label>
-            <select name="Company_nature" v-model="warrantor.warrantorTypeRatio">
-              <option v-for="item in warrantorType.options" :key="item.id" :value="item.ratio">{{item.name}}</option>
-            </select>
-            <span class="notice">{{warrantor.warrantorTypeRatio}}</span>
-          </div>
-          <!-- 担保强度 -->
-          <div class="form-group" v-if="warrantyStrength">
-            <label>{{warrantyStrength.factorName}}：</label>
-            <select name="Company_nature" v-model="warrantor.warrantyStrengthRatio">
-              <option v-for="item in warrantyStrength.options" :key="item.id" :value="item.ratio">{{item.name}}</option>
-            </select>
-            <span class="notice">{{warrantor.warrantyStrengthRatio}}</span>
-          </div>
-          <!-- 担保人评级 -->
-          <div class="form-group" v-if="guarantorNum==1">
-            <label>担保人有效认定评级 ：</label>
-            <select v-model="guarantorScale">
-              <option v-for="item in scaleList" :key="item.id" :value="item.id">{{item.rating}}</option>
-            </select>
-          </div>
-          <div class="form-group" v-if="guarantorNum>1">
-            <label>发行人违约率：</label>
-            <input type="number" name="guarantorPd" v-model="warrantor.guarantorPd">%
-          </div>
-        </div>
-      </div>
-    </div>
 
-    <div class="result" id="result">
-      <div class="btn" @click="getResult">获取计算结果</div>
-      <div v-if="LGDLevel">
-        <h3>计算结果：</h3>
-        <div class="form-group">
-        <span>债项特征调整系数</span> ：<span style="color: red;">{{bondFeatureAdjustCoefficient}}</span>
-        </div>
-        <div class="form-group">
-          <span>债务人特征调整系数</span> ：<span style="color: red;">{{debtorFeatureAdjustCoefficient}}</span>
-        </div>
-        <div class="form-group">
-          <span>抵质押品缓释价值</span> ：<span style="color: red;">{{pledgeReleasePrice}}</span>
-        </div>
-        <div class="form-group">
-          <span>担保人缓释价值</span> ：<span style="color: red;">{{warrantorReleasePrice}}</span>
-        </div>
-        <div class="form-group">
-          <span>原始的基础回收率</span> ：<span style="color: red;">{{originalBasisRecoveryRate}}</span>
-        </div>
-        <div class="form-group">
-          <span>基础回收率</span> ：<span style="color: red;">{{basisRecoveryRate}}</span>
-        </div>
-        <div class="form-group">
-          <span>LGD值</span> ：<span style="color: red;">{{LGDValue}}</span>
-        </div>
-        <div class="form-group">
-          <span>LGD级别</span> ：<span style="color: red;">{{LGDLevel}}</span>
-        </div>
-        <div class="form-group">
-          <span>债券基础评级</span> ：<span style="color: red;">{{companyBasisRating}}</span>
-        </div>
-        <div class="form-group">
-          <span>担保人有效评级</span> ：<span style="color: red;">{{guaranterRating}}</span>
-        </div>
-        <div class="form-group">
-          <span>最终评级</span> ：<span style="color: red;">{{finallyRating}}</span>
+          <div class="col-md-3 flex" v-if="guarantorNum==1">
+            <label>担保人有效认定评级：</label>
+            <span class="notice">{{warrantor.guarantorRating.rating}}</span>
+          </div>
+          <div class="col-md-3 flex" v-if="guarantorNum>1">
+            <label>担保人违约率：</label>
+            <span class="notice">{{warrantor.guarantorPd?warrantor.guarantorPd:'-'}}%</span>
+          </div>
+
+          <div class="col-md-6 flex">
+            <label>{{guaranteeTypeList.factorName}}：</label>
+            <span class="text-overflow" :title="warrantor.guaranteeType.name">{{warrantor.guaranteeType.name}}</span>
+            <span class="notice">{{warrantor.guaranteeType.ratio}}</span>
+          </div>
+
+          <div class="col-md-6 flex">
+            <label>{{warrantorTypeList.factorName}}：</label>
+            <span class="text-overflow" :title="warrantor.warrantorType.name">{{warrantor.warrantorType.name}}</span>
+            <span class="notice">{{warrantor.warrantorType.ratio}}</span>
+          </div>
+
+          <div class="col-md-6 flex">
+            <label>{{warrantyStrengthList.factorName}}：</label>
+            <span class="text-overflow" :title="warrantor.warrantyStrength.name">{{warrantor.warrantyStrength.name}}</span>
+            <span class="notice">{{warrantor.warrantyStrength.ratio}}</span>
+          </div>
         </div>
       </div>
+      <!-- 担保人模态框 -->
+      <b-modal ref="warrantorModal" centered :id="`warrantor${idx}`" hide-footer size="lg" :title="`担保人${guarantorNum>1?idx + 1:''}信息修改`">
+        <p class="my-1 flex">
+          <label>担保金额：</label>
+          <b-form-input class="nav_input" type="number" name="warrantorPrice" v-model="warrantor.warrantorPrice"></b-form-input>
+          <span class="notice"></span>
+        </p>
+
+        <p class="my-1 flex" v-if="guarantorNum==1">
+          <label>担保人有效认定评级：</label>
+          <b-form-select v-model="warrantor.guarantorRating" :options="scaleList" />
+          <span class="notice"></span>
+        </p>
+        <p class="my-1 flex" v-if="guarantorNum>1">
+          <label>担保人违约率：</label>
+          <b-form-input type="number" v-model="warrantor.guarantorPd"></b-form-input>
+          <span class="notice"></span>
+        </p>
+
+        <p class="my-1 flex">
+          <label>{{guaranteeTypeList.factorName}}：</label>
+          <b-form-select v-model="warrantor.guaranteeType" :options="guaranteeTypeList.options" />
+          <span class="notice">{{warrantor.guaranteeType.ratio}}</span>
+        </p>
+
+        <p class="my-1 flex">
+          <label>{{warrantorTypeList.factorName}}：</label>
+          <b-form-select v-model="warrantor.warrantorType" :options="warrantorTypeList.options" />
+          <span class="notice">{{warrantor.warrantorType.ratio}}</span>
+        </p>
+
+        <p class="my-1 flex">
+          <label>{{warrantyStrengthList.factorName}}：</label>
+          <b-form-select v-model="warrantor.warrantyStrength" :options="warrantyStrengthList.options" />
+          <span class="notice">{{warrantor.warrantyStrength.ratio}}</span>
+        </p>
+
+        <b-btn class="mt-3" variant="outline-success" block @click="hideWarrantorModal(idx)">OK</b-btn>
+      </b-modal>
+    </b-navbar>
+
+    <!-- 抵质押品信息 -->
+    <b-navbar class="pledge-info enter-list" v-b-modal="`pledge${idx}`" v-if="pledgeList.length>0" v-for="(pledge, idx) in pledgeList" :key="pledge.id">
+      <div class="col-md-2 nav_item t-center">抵质押品信息{{pledgeNum>1?idx+1:''}}：</div>
+      <div class="col-md-10 nav_item info">
+        <div class="row">
+          <div class="col-md-3 flex">
+            <label>抵质押品金额：</label>
+            <span class="notice">{{pledge.pledgePrice?pledge.pledgePrice:'-'}}</span>
+            <span>亿元</span>
+          </div>
+          <!-- 执法环境 -->
+          <div class="col-md-4 flex">
+            <label>{{pledgeRegionList.factorName}}：</label>
+            <span class="text-overflow" :title="pledge.pledgeRegion.name">{{pledge.pledgeRegion.name}}</span>
+            <span class="notice">{{pledge.pledgeRegion.ratio}}</span>
+          </div>
+          <!-- 抵押品独立性 -->
+          <div class="col-md-5 flex">
+            <label>{{pledgeDependList.factorName}}：</label>
+            <span class="text-overflow" :title="pledge.pledgeDepend.name">{{pledge.pledgeDepend.name}}</span>
+            <span class="notice">{{pledge.pledgeDepend.ratio}}</span>
+          </div>
+          <!-- 抵质押控制力 -->
+          <div class="col-md-5 flex">
+            <label>{{pledgeControlList.factorName}}：</label>
+            <span class="text-overflow" :title="pledge.pledgeControl.name">{{pledge.pledgeControl.name}}</span>
+            <span class="notice">{{pledge.pledgeControl.ratio}}</span>
+          </div>
+          <!-- 抵质押类型 -->
+          <div class="col-md-7 flex">
+            <label>{{pledgeTypeList.factorName}}：</label>
+            <span class="text-overflow" :title="pledge.pledgeType.name">{{pledge.pledgeType.name}}</span>
+            <span class="notice">{{pledge.pledgeType.ratio}}</span>
+          </div>
+
+        </div>
+      </div>
+      <!-- 抵质押品模态框 -->
+      <b-modal ref="pledgeModal" centered :id="`pledge${idx}`" hide-footer size="lg" :title="`抵质押品${pledgeNum>1?idx + 1:''}信息修改`">
+        <p class="my-1 flex">
+          <label>抵质押品金额：</label>
+          <b-form-input class="nav_input" type="number" name="pledgePrice" v-model="pledge.pledgePrice"></b-form-input>
+          <span class="notice"></span>
+        </p>
+        <!-- 执法环境 -->
+        <p class="my-1 flex">
+          <label>{{pledgeRegionList.factorName}}：</label>
+          <b-form-select v-model="pledge.pledgeRegion" :options="pledgeRegionList.options" />
+          <span class="notice">{{pledge.pledgeRegion.ratio}}</span>
+        </p>
+        <!-- 抵押品独立性 -->
+        <p class="my-1 flex">
+          <label>{{pledgeDependList.factorName}}：</label>
+          <b-form-select v-model="pledge.pledgeDepend" :options="pledgeDependList.options" />
+          <span class="notice">{{pledge.pledgeDepend.ratio}}</span>
+        </p>
+        <!-- 抵质押控制力 -->
+        <p class="my-1 flex">
+          <label>{{pledgeControlList.factorName}}：</label>
+          <b-form-select v-model="pledge.pledgeControl" :options="pledgeControlList.options" />
+          <span class="notice">{{pledge.pledgeControl.ratio}}</span>
+        </p>
+        <!-- 抵质押类型 -->
+        <p class="my-1 flex">
+          <label>{{pledgeTypeList.factorName}}：</label>
+          <b-form-select v-model="pledge.pledgeType" :options="pledgeTypeList.options" />
+          <span class="notice">{{pledge.pledgeType.ratio}}</span>
+        </p>
+
+        <b-btn class="mt-3" variant="outline-success" block @click="hidePledgeModal(idx)">OK</b-btn>
+      </b-modal>
+    </b-navbar>
+
+    <b-btn class="mt-3" size="lg" variant="warning" block @click="getResult">计算</b-btn>
+
+    <div class="result row">
+      <div class="col-md-4">
+        <label>债项特征调整系数：</label>
+        <span class="notice">{{bondFeatureAdjustCoefficient?bondFeatureAdjustCoefficient:'-'}}</span>
+        </div>
+      <div class="col-md-4">
+        <label>原始的基础回收率：</label>
+        <span class="notice">{{originalBasisRecoveryRate?originalBasisRecoveryRate:'-'}}</span>
+        </div>
+      <div class="col-md-4">
+        <label>债券基础评级：</label>
+        <span class="notice">{{companyBasisRating && companyBasisRating.rating?companyBasisRating.rating:'-'}}</span>
+        </div>
+
+      <div class="col-md-4">
+        <label>债务人特征调整系数：</label>
+        <span class="notice">{{debtorFeatureAdjustCoefficient?debtorFeatureAdjustCoefficient:'-'}}</span>
+        </div>
+      <div class="col-md-4">
+        <label>基础回收率：</label>
+        <span class="notice">{{basisRecoveryRate?basisRecoveryRate:'-'}}</span>
+        </div>
+      <div class="col-md-4">
+        <label>担保人有效评级：</label>
+        <span class="notice">{{guarantorRating && guarantorRating.rating?guarantorRating.rating:'-'}}</span>
+        </div>
+
+      <div class="col-md-4">
+        <label>抵质押品缓释价值：</label>
+        <span class="notice">{{pledgeReleasePrice?pledgeReleasePrice:'-'}}</span>
+        </div>
+      <div class="col-md-4">
+        <label>LGD值：</label>
+        <span class="notice">{{LGDValue?LGDValue:'-'}}</span>
+        </div>
+      <div class="col-md-4">
+        <label>最终评级：</label>
+        <span class="notice">{{finallyRating?finallyRating:'-'}}</span>
+        </div>
+
+
+      <div class="col-md-4">
+        <label>担保人缓释价值：</label>
+        <span class="notice">{{warrantorReleasePrice?warrantorReleasePrice:'-'}}</span>
+        </div>
+      <div class="col-md-4">
+        <label>LGD级别：</label>
+        <span class="notice">{{LGDObj && LGDObj.level?LGDObj.level:'-'}}</span>
+        </div>
+
+
     </div>
   </div>
 </template>
 
 <script>
-import axios from "axios";
-
+import axios from 'axios'
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
+import './app.css'
 export default {
   name: "App",
   data() {
     return {
-      companyNum: 1, // 发行人信息
-      pledgeNum: 0, // 抵质押品数量
-      guarantorNum: 0, // 担保人数量
+      companyNum: null, // 发行人信息
+      pledgeNum: null, // 抵质押品数量
+      guarantorNum: null, // 担保人数量
+      isCheck: false, // 确认场景
 
-      companyScale: 1, // 发行人评级
-      guarantorScale: 1, // 担保人评级
-      scaleList: null, // 评级映射表
-
-      companyList: [{
-        companyNatureRatio: 0,
-        industaryRatio: 0,
-        creditRegionRatio: 0
-      }], // 发行人列表
-      pledgeList: [], // 抵质押列表
-      warrantorList: [], // 担保人列表
-
+      bondType: null, // 选取的债项类型
+      bondTypeList: null,
       bondBalance: null, // 债券余额
+      bondTypeCheck: false, // 债项类型确认
 
-      bondType: null, // 债项类型
-      bondTypeRatio: null,
 
-      companyNature: null, // 股权结构
-      industary: null, // 发行人行业
-      creditRegion: null, // 信用环境
-
-      warrantorType: null, // 担保人类型
-      warrantyStrength: null, // 担保强度
-      guaranteeType: null, // 担保类型
-
-      pledgeType: null, // 抵质押品类型
-      pledgeControl: null, // 抵质押品控制力
-      pledgeRegion: null, // 抵质押品执法环境
-      pledgeDepend: null, // 抵质押物独立性
+      companyNatureList: null, // 股权结构
+      industaryList: null, // 发行人行业
+      creditRegionList: null, // 信用环境
+      warrantorTypeList: null, // 担保人类型
+      warrantyStrengthList: null, // 担保强度
+      guaranteeTypeList: null, // 担保类型
+      pledgeTypeList: null, // 抵质押品类型
+      pledgeControlList: null, // 抵质押品控制力
+      pledgeRegionList: null, // 抵质押品执法环境
+      pledgeDependList: null, // 抵质押物独立性
 
       LGDRules: null,
+      scaleList: null, // 评级映射表
+
+      companyList: [], // 发行人列表
+      pledgeList: [], // 抵质押列表
+      warrantorList: [], // 担保人列表
 
       // 计算结果：
       bondFeatureAdjustCoefficient: null, // 债项特征调整系数
@@ -278,63 +374,81 @@ export default {
       originalBasisRecoveryRate: null, // 原始的基础回收率
       basisRecoveryRate: null, // 基础回收率
       LGDValue: null, // LGD值
-      LGDLevel: null, // LGD级别
+      LGDObj: null, // 匹配的LGD对象
 
       companyBasisRating: null, // 债券基础评级
-      guaranterRating: null, // 担保人有效评级
+      guarantorRating: null, // 担保人有效评级
       finallyRating: null, // 最终评级
     };
   },
   created() {
     axios({ url: "../../static/data/company/BOND_TYPE.json" }).then(res => {
-      this.bondType = res.data;
-      this.bondTypeRatio = res.data.options[0].ratio;
+      this.bondTypeList = res.data;
+      this.optionsEach(this.bondTypeList.options);
+      this.bondType = this.bondTypeList.options[0];
     });
     axios({ url: "../../static/data/company/CORP_NATURE.json" }).then(res => {
-      this.companyNature = res.data;
-      this.companyList[0].companyNatureRatio = res.data.options[0].ratio;
+      this.companyNatureList = res.data;
+      this.optionsEach(this.companyNatureList.options);
+      this.companyNature = this.companyNatureList.options[0];
     });
     axios({ url: "../../static/data/company/INDUSTRY.json" }).then(res => {
-      this.industary = res.data;
-      this.companyList[0].industaryRatio = res.data.options[0].ratio;
+      this.industaryList = res.data;
+      this.optionsEach(this.industaryList.options);
+      this.industary = this.industaryList.options[0];
     });
     axios({ url: "../../static/data/company/CREDIT_REGION.json" }).then(
       res => {
-        this.creditRegion = res.data;
-        this.companyList[0].creditRegionRatio = res.data.options[0].ratio;
+        this.creditRegionList = res.data;
+        this.optionsEach(this.creditRegionList.options);
+        this.creditRegion = this.creditRegionList.options[0];
       }
     );
     axios({ url: "../../static/data/guarantor/WARRANTOR_TYPE.json" }).then(
       res => {
-        this.warrantorType = res.data;
+        this.warrantorTypeList = res.data;
+        this.optionsEach(this.warrantorTypeList.options);
+        this.warrantorType = this.warrantorTypeList.options[0];
       }
     );
     axios({ url: "../../static/data/guarantor/WARRANTY_STRENGTH.json" }).then(
       res => {
-        this.warrantyStrength = res.data;
+        this.warrantyStrengthList = res.data;
+        this.optionsEach(this.warrantyStrengthList.options);
+        this.warrantyStrength = this.warrantyStrengthList.options[0];
       }
     );
     axios({ url: "../../static/data/guarantor/GUARANTEE_TYPE.json" }).then(
       res => {
-        this.guaranteeType = res.data;
+        this.guaranteeTypeList = res.data;
+        this.optionsEach(this.guaranteeTypeList.options);
+        this.guaranteeType = this.guaranteeTypeList.options[0];
       }
     );
     axios({ url: "../../static/data/pledge/PLEDGE_TYPE.json" }).then(res => {
-      this.pledgeType = res.data;
+      this.pledgeTypeList = res.data;
+      this.optionsEach(this.pledgeTypeList.options);
+      this.pledgeType = this.pledgeTypeList.options[0];
     });
     axios({ url: "../../static/data/pledge/PLEDGE_CONTROL.json" }).then(
       res => {
-        this.pledgeControl = res.data;
+        this.pledgeControlList = res.data;
+        this.optionsEach(this.pledgeControlList.options);
+        this.pledgeControl = this.pledgeControlList.options[0];
       }
     );
     axios({ url: "../../static/data/pledge/PLEDGE_REGION.json" }).then(
       res => {
-        this.pledgeRegion = res.data;
+        this.pledgeRegionList = res.data;
+        this.optionsEach(this.pledgeRegionList.options);
+        this.pledgeRegion = this.pledgeRegionList.options[0];
       }
     );
     axios({ url: "../../static/data/pledge/PLEDGE_DEPEND.json" }).then(
       res => {
-        this.pledgeDepend = res.data;
+        this.pledgeDependList = res.data;
+        this.optionsEach(this.pledgeDependList.options);
+        this.pledgeDepend = this.pledgeDependList.options[0];
       }
     );
     axios({ url: "../../static/data/LGDRules.json" }).then(
@@ -345,20 +459,55 @@ export default {
     axios({ url: "../../static/data/scales.json" }).then(
       res => {
         this.scaleList = res.data;
+        this.scaleList.forEach(it => {
+          it.value = it;
+          it.text = it.rating;
+        })
       }
     );
   },
   methods: {
+    hidePledgeModal(idx) {
+      this.$refs.pledgeModal[idx].hide()
+    },
+    hideWarrantorModal(idx) {
+      this.$refs.warrantorModal[idx].hide()
+    },
+    hideCompanyModal(idx) {
+      this.$refs.companyModal[idx].hide()
+    },
+    optionsEach(arr) {
+      arr.forEach(it => {
+        it.value = it;
+        it.text = it.name;
+      })
+    },
+    resetBondType() {
+      this.bondTypeCheck = false;
+    },
+    checkBondType() {
+      this.bondTypeCheck = true;
+    },
+    reset() {
+      this.isCheck = false;
+      this.companyNum = null;
+      this.pledgeNum = null;
+      this.guarantorNum = null;
+      this.companyList = [];
+      this.pledgeList = [];
+      this.warrantorList = [];
+    },
+    checkSelect() {
+      this.isCheck = true;
+      this.companyNum = this.companyNum ? this.companyNum : 1;
+      this.pledgeNum = this.pledgeNum ? this.pledgeNum : 0;
+      this.guarantorNum = this.guarantorNum ? this.guarantorNum : 0;
+      this.modelInit();
+    },
     // 获取场景
-    modelChange() {
-      this.bondFeatureAdjustCoefficient = null;
-      this.debtorFeatureAdjustCoefficient = null;
-      this.pledgeReleasePrice = null;
-      this.warrantorReleasePrice = null;
-      this.originalBasisRecoveryRate = null;
-      this.basisRecoveryRate = null;
-      this.LGDValue = null;
-      this.LGDLevel = null;
+    modelInit() {
+      // 计算结果初始化
+      this.resultInit();
 
       this.companyList = [];
       this.pledgeList = [];
@@ -366,35 +515,57 @@ export default {
       // 发行人
       for(var i = 0; i < this.companyNum; i++) {
         var companyObj = {
-          companyNatureRatio: this.companyNature.options[0].ratio,
-          industaryRatio: this.industary.options[0].ratio,
-          creditRegionRatio: this.creditRegion.options[0].ratio,
-          companyPd: null
+          id: `company${i}`,
+          companyNature: this.companyNatureList.options[0],
+          industary: this.industaryList.options[0],
+          creditRegion: this.creditRegionList.options[0],
+          companyPd: null, // 违约率
+          companyRating: this.scaleList[0]  // 发行人评级
         }
         this.companyList.push(companyObj);
       }
+      // 抵押品
       for(var i = 0; i < this.pledgeNum; i++) {
         var pledgeObj = {
+          id: `pledge${i}`,
           pledgePrice: null,
-          pledgeDependRatio: this.pledgeDepend.options[0].ratio,
-          pledgeRegionRatio: this.pledgeRegion.options[0].ratio,
-          pledgeControlRatio: this.pledgeControl.options[0].ratio,
-          pledgeTypeRatio: this.pledgeType.options[0].ratio
+          pledgeDepend: this.pledgeDependList.options[0],
+          pledgeRegion: this.pledgeRegionList.options[0],
+          pledgeControl: this.pledgeControlList.options[0],
+          pledgeType: this.pledgeTypeList.options[0]
         }
         this.pledgeList.push(pledgeObj);
       }
+
+      // 担保人
       for(var i = 0; i < this.guarantorNum; i++) {
         var warrantorObj = {
+          id: `guarantor${i}`,
           warrantorPrice: null,
-          guaranteeTypeRatio: this.guaranteeType.options[0].ratio,
-          warrantorTypeRatio: this.warrantorType.options[0].ratio,
-          warrantyStrengthRatio: this.warrantyStrength.options[0].ratio,
-          guarantorPd: null // 担保人违约率
+          guaranteeType: this.guaranteeTypeList.options[0],
+          warrantorType: this.warrantorTypeList.options[0],
+          warrantyStrength: this.warrantyStrengthList.options[0],
+          guarantorPd: null, // 担保人违约率
+          guarantorRating: this.scaleList[0] // 担保人评级
         }
         this.warrantorList.push(warrantorObj);
       }
     },
+    resultInit() {
+      this.bondFeatureAdjustCoefficient = null;
+      this.debtorFeatureAdjustCoefficient = null;
+      this.pledgeReleasePrice = null;
+      this.warrantorReleasePrice = null;
+      this.originalBasisRecoveryRate = null;
+      this.basisRecoveryRate = null;
+      this.LGDValue = null;
+      this.LGDObj = null;
+      this.companyBasisRating = null;
+      this.guarantorRating = null;
+      this.finallyRating = null;
+    },
     getResult() {
+      this.resultInit();
       // 债项特征调整系数
       this.getBondFeatureAdjustCoefficient();
       // 债务人特征调整系数
@@ -420,29 +591,29 @@ export default {
     },
     // 债项特征调整系数:等于债项类型
     getBondFeatureAdjustCoefficient() {
-      this.bondFeatureAdjustCoefficient = this.bondTypeRatio;
+      this.bondFeatureAdjustCoefficient = this.bondType.ratio;
     },
     // 债务人特征调整系数=股权结构*发行人行业*信用环境
     getDebtorFeatureAdjustCoefficient() {
       var temp = 0;
       for(var i = 0; i< this.companyNum; i++) {
         var item = this.companyList[i];
-        temp += item.companyNatureRatio * item.industaryRatio * item.creditRegionRatio;
+        temp += (item.companyNature.ratio * 1000) * (item.industary.ratio * 1000) * (item.creditRegion.ratio * 1000);
       }
-      this.debtorFeatureAdjustCoefficient = temp / this.companyNum;
+      this.debtorFeatureAdjustCoefficient = temp / 1000000000 / this.companyNum;
     },
     // 抵质押品缓释价值=抵质押品价值*抵质押品类型*抵质押品控制力*抵质押品执法环境
     getPledgeReleasePrice() {
       for(var i = 0;i < this.pledgeList.length; i++) {
         var item = this.pledgeList[i];
-        this.pledgeReleasePrice += item.pledgePrice * item.pledgeTypeRatio * item.pledgeControlRatio * item.pledgeRegionRatio;
+        this.pledgeReleasePrice += (item.pledgePrice * 1000) * (item.pledgeType.ratio * 1000) * (item.pledgeControl.ratio * 1000) * (item.pledgeRegion.ratio * 1000) / 1000000000000;
       }
     },
     // 担保人缓释价值=担保人类型*担保强度*担保价值*担保类型
     getWarrantorReleasePrice() {
       for(var i = 0;i < this.warrantorList.length; i++) {
         var item = this.warrantorList[i];
-        this.warrantorReleasePrice += item.warrantorTypeRatio * item.warrantyStrengthRatio * item.warrantorPrice * item.guaranteeTypeRatio;
+        this.warrantorReleasePrice += (item.warrantorType.ratio * 1000) * (item.warrantyStrength.ratio * 1000) * (item.warrantorPrice * 1000) * (item.guaranteeType.ratio * 1000) / 1000000000000;
       }
     },
     // 原始的基础回收率:担保人缓释价值+抵质押品缓释价值大于0，那么就等于(担保人缓释价值+抵质押品缓释价值)/债券风险暴露EAD,否则就等于0.35
@@ -468,102 +639,62 @@ export default {
     },
     // LGD级别
     getLGDLevel() {
-      for(var i = 0; i < this.LGDRules.length; i++) {
-        var item = this.LGDRules[i];
+      this.LGDRules.some(item => {
         if (this.LGDValue > item.lowBound && this.LGDValue <= item.upperBound) {
-          this.LGDLevel = item.level;
-          break;
+          this.LGDObj = item;
+          return;
         }
-      }
+      })
     },
-    // 债券基础评级
+    // 债券基础评级：
     getCompanyBasisRating() {
-      var LGDObj = this.LGDRules.filter(it => {
-          return it.level===this.LGDLevel
-        })[0];
       if (this.companyNum > 1) {
         // 平均违约率
         var averagePd = 0;
         this.companyList.forEach(it => {
           averagePd += it.companyPd * 1000;
         })
-        averagePd = averagePd / this.companyList.length / 100000;
-        this.companyScale = this.scaleList.filter(it => { // 发行人评级
+        averagePd = averagePd / this.companyNum / 100000;
+        this.companyList[0].companyRating = this.scaleList.filter(it => { // 发行人评级
           return averagePd > it.minValue && averagePd <= it.maxValue;
-        })[0].id;
+        })[0];
       }
-      var temp = this.companyScale - LGDObj.adjust;
+      var temp = this.companyList[0].companyRating.id - this.LGDObj.adjust;
       if (temp < 1) {
         temp = 1;
       }
       this.companyBasisRating = this.scaleList.filter(it => {
         return it.id === temp
-      })[0].rating;
+      })[0];
     },
     // 担保人有效评级
     getGuaranterRating() {
-      var LGDObj = this.LGDRules.filter(it => {
-        return it.level===this.LGDLevel
-      })[0];
-
-      if (this.guarantorNum > 1) {
-        // 平均违约率
-        var averagePd = 0;
-        this.warrantorList.forEach(it => {
-          averagePd += it.guarantorPd * 1000;
-        })
-        averagePd = averagePd / this.warrantorList.length / 100000;
-        this.guarantorScale = this.scaleList.filter(it => { // 发行人评级
-          return averagePd > it.minValue && averagePd <= it.maxValue;
-        })[0].id;
+      if (this.guarantorNum > 0) {
+        if (this.guarantorNum > 1) {
+          // 平均违约率
+          var averagePd = 0;
+          this.warrantorList.forEach(it => {
+            averagePd += it.guarantorPd * 1000;
+          })
+          averagePd = averagePd / this.warrantorList.length / 100000;
+          this.warrantorList[0].guarantorRating = this.scaleList.filter(it => { // 发行人评级
+            return averagePd > it.minValue && averagePd <= it.maxValue;
+          })[0];
+        }
+        this.guarantorRating = this.warrantorList[0].guarantorRating;
       }
-      this.guaranterRating = this.scaleList.filter(it => {
-        return it.id === this.guarantorScale
-      })[0].rating;
     },
     // 最终评级
     getFinallyRating() {
-      var companyScale = this.scaleList.filter(it => {
-        return it.rating == this.companyBasisRating
-      })[0];
-      var guaranterScale = this.scaleList.filter(it => {
-        return it.rating == this.guaranterRating
-      })[0];
-      this.finallyRating = companyScale.id < guaranterScale.id ? companyScale.rating : guaranterScale.rating;
+      if (!this.guarantorRating) {
+        this.finallyRating = this.companyBasisRating.rating;
+      } else {
+        this.finallyRating = this.companyBasisRating.id < this.guarantorRating.id ? this.companyBasisRating.rating : this.guarantorRating.rating;
+      }
     }
   }
 };
+
+
 </script>
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-a {
-  color: #42b983;
-}
-.form-group {
-  padding: 10px 0;
-}
-.left {
-  float: left;
-  width: 65%;
-}
-.btn {
-  width: 150px;
-  height: 40px;
-  border: 1px solid #ccc;
-  border-radius: 3px;
-  text-align: center;
-  line-height: 40px;
-  cursor: pointer;
-  background: #1875c7;
-  color: #fff;
-}
-.result {
-  width: 450px;
-  position: fixed;
-  right: 0;
-}
-.notice {
-  margin-left: 10px;
-  color: blue;
-}
-</style>
+
