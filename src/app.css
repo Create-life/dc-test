@@ -1,0 +1,110 @@
+h2 {
+  text-align: center;
+  padding: 15px 0;
+  margin-bottom: 0;
+}
+.navbar {
+  color: #fff;
+  font-size: 20px;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.nav_item {
+  padding: 10px 0;
+  line-height: 38px;
+}
+.nav_item > div {
+  display: flex;
+}
+.nav_item > div > label {
+  flex-shrink: 0;
+  margin-bottom: 0;
+}
+.list-item{
+  border: 1px solid #ccc;
+  padding: 0.5rem 1rem;
+}
+
+.enter-list {
+  color: #000;
+  margin: 10px 0;
+  line-height: 38px;
+  font-size: 16px;
+  cursor: pointer;
+}
+.nav-info {
+  background: #8192D6 !important;
+}
+
+.bond-info {
+  background-color: rgba(129, 194, 214, 0.5);
+  /* border: 1px solid #81C2D6; */
+}
+
+.company-info {
+  background: rgba(217, 179, 230, 0.5);
+  /* border: 1px solid #D9B3E6; */
+}
+
+.guarantor-info {
+  background: rgba(220, 247, 161, 0.5);
+  /* border: 1px solid #DCF7A1; */
+}
+
+.pledge-info {
+  background: rgb(131, 252, 216, 0.5);
+  /* border: 1px solid #83FCD8; */
+}
+.pd-0{
+  padding: 0;
+}
+.text-overflow {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+label {
+  flex-shrink: 0;
+}
+.info{
+  padding: 0;
+}
+.info > div{
+  line-height: 25px;
+}
+.flex {
+  display: flex;
+}
+.result {
+  width: 100%;
+  border-radius: 3px;
+  border: 1px solid #ffc107;
+  margin: 20px 0;
+  padding: 10px 20px;
+  font-size: 18px;
+}
+.result > div {
+  margin: 5px 0;
+  height: 35px;
+  line-height: 35px;
+  display: flex;
+  font-size: 16px;
+}
+
+.notice{
+  color: red;
+  font-weight: bold;
+  padding: 0 5px;
+}
+.t-center {
+  text-align: center;
+  font-size: 20px;
+}
+
+p > label {
+  width: 25%;
+  text-align: right;
+}
+p > span {
+  width: 10%;
+}
