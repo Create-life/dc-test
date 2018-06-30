@@ -382,81 +382,81 @@ export default {
     };
   },
   created() {
-    axios({ url: "../../static/data/company/BOND_TYPE.json" }).then(res => {
+    axios({ url: "./static/data/company/BOND_TYPE.json" }).then(res => {
       this.bondTypeList = res.data;
       this.optionsEach(this.bondTypeList.options);
       this.bondType = this.bondTypeList.options[0];
     });
-    axios({ url: "../../static/data/company/CORP_NATURE.json" }).then(res => {
+    axios({ url: "./static/data/company/CORP_NATURE.json" }).then(res => {
       this.companyNatureList = res.data;
       this.optionsEach(this.companyNatureList.options);
       this.companyNature = this.companyNatureList.options[0];
     });
-    axios({ url: "../../static/data/company/INDUSTRY.json" }).then(res => {
+    axios({ url: "./static/data/company/INDUSTRY.json" }).then(res => {
       this.industaryList = res.data;
       this.optionsEach(this.industaryList.options);
       this.industary = this.industaryList.options[0];
     });
-    axios({ url: "../../static/data/company/CREDIT_REGION.json" }).then(
+    axios({ url: "./static/data/company/CREDIT_REGION.json" }).then(
       res => {
         this.creditRegionList = res.data;
         this.optionsEach(this.creditRegionList.options);
         this.creditRegion = this.creditRegionList.options[0];
       }
     );
-    axios({ url: "../../static/data/guarantor/WARRANTOR_TYPE.json" }).then(
+    axios({ url: "./static/data/guarantor/WARRANTOR_TYPE.json" }).then(
       res => {
         this.warrantorTypeList = res.data;
         this.optionsEach(this.warrantorTypeList.options);
         this.warrantorType = this.warrantorTypeList.options[0];
       }
     );
-    axios({ url: "../../static/data/guarantor/WARRANTY_STRENGTH.json" }).then(
+    axios({ url: "./static/data/guarantor/WARRANTY_STRENGTH.json" }).then(
       res => {
         this.warrantyStrengthList = res.data;
         this.optionsEach(this.warrantyStrengthList.options);
         this.warrantyStrength = this.warrantyStrengthList.options[0];
       }
     );
-    axios({ url: "../../static/data/guarantor/GUARANTEE_TYPE.json" }).then(
+    axios({ url: "./static/data/guarantor/GUARANTEE_TYPE.json" }).then(
       res => {
         this.guaranteeTypeList = res.data;
         this.optionsEach(this.guaranteeTypeList.options);
         this.guaranteeType = this.guaranteeTypeList.options[0];
       }
     );
-    axios({ url: "../../static/data/pledge/PLEDGE_TYPE.json" }).then(res => {
+    axios({ url: "./static/data/pledge/PLEDGE_TYPE.json" }).then(res => {
       this.pledgeTypeList = res.data;
       this.optionsEach(this.pledgeTypeList.options);
       this.pledgeType = this.pledgeTypeList.options[0];
     });
-    axios({ url: "../../static/data/pledge/PLEDGE_CONTROL.json" }).then(
+    axios({ url: "./static/data/pledge/PLEDGE_CONTROL.json" }).then(
       res => {
         this.pledgeControlList = res.data;
         this.optionsEach(this.pledgeControlList.options);
         this.pledgeControl = this.pledgeControlList.options[0];
       }
     );
-    axios({ url: "../../static/data/pledge/PLEDGE_REGION.json" }).then(
+    axios({ url: "./static/data/pledge/PLEDGE_REGION.json" }).then(
       res => {
         this.pledgeRegionList = res.data;
         this.optionsEach(this.pledgeRegionList.options);
         this.pledgeRegion = this.pledgeRegionList.options[0];
       }
     );
-    axios({ url: "../../static/data/pledge/PLEDGE_DEPEND.json" }).then(
+    axios({ url: "./static/data/pledge/PLEDGE_DEPEND.json" }).then(
       res => {
         this.pledgeDependList = res.data;
         this.optionsEach(this.pledgeDependList.options);
         this.pledgeDepend = this.pledgeDependList.options[0];
       }
     );
-    axios({ url: "../../static/data/LGDRules.json" }).then(
+    axios({ url: "./static/data/LGDRules.json" }).then(
       res => {
         this.LGDRules = res.data;
       }
     );
-    axios({ url: "../../static/data/scales.json" }).then(
+    axios({ url: "./static/data/scales.json" }).then(
       res => {
         this.scaleList = res.data;
         this.scaleList.forEach(it => {
