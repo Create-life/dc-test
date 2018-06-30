@@ -29,12 +29,12 @@
       <div class="col-md-9 nav_item row" v-show="!bondTypeCheck">
         <div class="col-md-4">
           <label>债券余额：</label>
-          <b-form-input class="nav_input" type="number"  name="Company_nature" v-model="bondBalance"></b-form-input>
+          <b-form-input @change="resultInit" class="nav_input" type="number" name="Company_nature" v-model="bondBalance"></b-form-input>
           <label>亿元</label>
         </div>
         <div class="col-md-8">
           <label>债项类型：</label>
-          <b-form-select v-model="bondType" :options="bondTypeList.options" />
+          <b-form-select @change="resultInit" v-model="bondType" :options="bondTypeList.options" />
           <span class="notice">{{bondType.ratio}}</span>
         </div>
       </div>
@@ -90,27 +90,27 @@
       <b-modal ref="companyModal" centered :id="`company${idx}`" hide-footer size="lg" :title="`发行人${companyNum>1?idx + 1:''}信息修改`">
         <p class="my-1 flex">
           <label>{{companyNatureList.factorName}}：</label>
-          <b-form-select v-model="company.companyNature" :options="companyNatureList.options" />
+          <b-form-select @change="resultInit" v-model="company.companyNature" :options="companyNatureList.options" />
           <span class="notice">{{company.companyNature.ratio}}</span>
         </p>
         <p class="my-1 flex">
           <label>{{industaryList.factorName}}：</label>
-          <b-form-select v-model="company.industary" :options="industaryList.options" />
+          <b-form-select @change="resultInit" v-model="company.industary" :options="industaryList.options" />
           <span class="notice">{{company.industary.ratio}}</span>
         </p>
         <p class="my-1 flex">
           <label>{{creditRegionList.factorName}}：</label>
-          <b-form-select v-model="company.creditRegion" :options="creditRegionList.options" />
+          <b-form-select @change="resultInit" v-model="company.creditRegion" :options="creditRegionList.options" />
           <span class="notice">{{company.creditRegion.ratio}}</span>
         </p>
         <p class="my-1 flex" v-if="companyList.length==1">
           <label>发行人有效认定评级：</label>
-          <b-form-select v-model="company.companyRating" :options="scaleList" />
+          <b-form-select @change="resultInit" v-model="company.companyRating" :options="scaleList" />
           <span class="notice"></span>
         </p>
         <p class="my-1 flex" v-if="companyList.length>1">
           <label>发行人违约率：</label>
-          <b-form-input type="number" name="companyPd" v-model="company.companyPd"></b-form-input>
+          <b-form-input @change="resultInit" type="number" name="companyPd" v-model="company.companyPd"></b-form-input>
           <span class="notice"></span>
         </p>
         <b-btn class="mt-3" variant="outline-success" block @click="hideCompanyModal(idx)">OK</b-btn>
@@ -161,36 +161,36 @@
       <b-modal ref="warrantorModal" centered :id="`warrantor${idx}`" hide-footer size="lg" :title="`担保人${guarantorNum>1?idx + 1:''}信息修改`">
         <p class="my-1 flex">
           <label>担保金额：</label>
-          <b-form-input class="nav_input" type="number" name="warrantorPrice" v-model="warrantor.warrantorPrice"></b-form-input>
+          <b-form-input @change="resultInit" class="nav_input" type="number" name="warrantorPrice" v-model="warrantor.warrantorPrice"></b-form-input>
           <span class="notice"></span>
         </p>
 
         <p class="my-1 flex" v-if="guarantorNum==1">
           <label>担保人有效认定评级：</label>
-          <b-form-select v-model="warrantor.guarantorRating" :options="scaleList" />
+          <b-form-select @change="resultInit" v-model="warrantor.guarantorRating" :options="scaleList" />
           <span class="notice"></span>
         </p>
         <p class="my-1 flex" v-if="guarantorNum>1">
           <label>担保人违约率：</label>
-          <b-form-input type="number" v-model="warrantor.guarantorPd"></b-form-input>
+          <b-form-input @change="resultInit" type="number" v-model="warrantor.guarantorPd"></b-form-input>
           <span class="notice"></span>
         </p>
 
         <p class="my-1 flex">
           <label>{{guaranteeTypeList.factorName}}：</label>
-          <b-form-select v-model="warrantor.guaranteeType" :options="guaranteeTypeList.options" />
+          <b-form-select @change="resultInit" v-model="warrantor.guaranteeType" :options="guaranteeTypeList.options" />
           <span class="notice">{{warrantor.guaranteeType.ratio}}</span>
         </p>
 
         <p class="my-1 flex">
           <label>{{warrantorTypeList.factorName}}：</label>
-          <b-form-select v-model="warrantor.warrantorType" :options="warrantorTypeList.options" />
+          <b-form-select @change="resultInit" v-model="warrantor.warrantorType" :options="warrantorTypeList.options" />
           <span class="notice">{{warrantor.warrantorType.ratio}}</span>
         </p>
 
         <p class="my-1 flex">
           <label>{{warrantyStrengthList.factorName}}：</label>
-          <b-form-select v-model="warrantor.warrantyStrength" :options="warrantyStrengthList.options" />
+          <b-form-select @change="resultInit" v-model="warrantor.warrantyStrength" :options="warrantyStrengthList.options" />
           <span class="notice">{{warrantor.warrantyStrength.ratio}}</span>
         </p>
 
@@ -239,31 +239,31 @@
       <b-modal ref="pledgeModal" centered :id="`pledge${idx}`" hide-footer size="lg" :title="`抵质押品${pledgeNum>1?idx + 1:''}信息修改`">
         <p class="my-1 flex">
           <label>抵质押品金额：</label>
-          <b-form-input class="nav_input" type="number" name="pledgePrice" v-model="pledge.pledgePrice"></b-form-input>
+          <b-form-input @change="resultInit" class="nav_input" type="number" name="pledgePrice" v-model="pledge.pledgePrice"></b-form-input>
           <span class="notice"></span>
         </p>
         <!-- 执法环境 -->
         <p class="my-1 flex">
           <label>{{pledgeRegionList.factorName}}：</label>
-          <b-form-select v-model="pledge.pledgeRegion" :options="pledgeRegionList.options" />
+          <b-form-select @change="resultInit" v-model="pledge.pledgeRegion" :options="pledgeRegionList.options" />
           <span class="notice">{{pledge.pledgeRegion.ratio}}</span>
         </p>
         <!-- 抵押品独立性 -->
         <p class="my-1 flex">
           <label>{{pledgeDependList.factorName}}：</label>
-          <b-form-select v-model="pledge.pledgeDepend" :options="pledgeDependList.options" />
+          <b-form-select @change="resultInit" v-model="pledge.pledgeDepend" :options="pledgeDependList.options" />
           <span class="notice">{{pledge.pledgeDepend.ratio}}</span>
         </p>
         <!-- 抵质押控制力 -->
         <p class="my-1 flex">
           <label>{{pledgeControlList.factorName}}：</label>
-          <b-form-select v-model="pledge.pledgeControl" :options="pledgeControlList.options" />
+          <b-form-select @change="resultInit" v-model="pledge.pledgeControl" :options="pledgeControlList.options" />
           <span class="notice">{{pledge.pledgeControl.ratio}}</span>
         </p>
         <!-- 抵质押类型 -->
         <p class="my-1 flex">
           <label>{{pledgeTypeList.factorName}}：</label>
-          <b-form-select v-model="pledge.pledgeType" :options="pledgeTypeList.options" />
+          <b-form-select @change="resultInit" v-model="pledge.pledgeType" :options="pledgeTypeList.options" />
           <span class="notice">{{pledge.pledgeType.ratio}}</span>
         </p>
 
