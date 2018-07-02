@@ -496,7 +496,9 @@ export default {
           industary: this.industaryList.options[0],
           creditRegion: this.creditRegionList.options[0],
           companyPd: null, // 违约率
-          companyRating: this.scaleList[0]  // 发行人评级
+          companyRating: this.scaleList[0],  // 发行人评级
+          originalBasisRecoveryRate: null, // 原始基础回收率
+          basisRecoveryRate: null // 基础回收率
         }
         this.companyList.push(companyObj);
       }
@@ -601,7 +603,8 @@ export default {
       var temp = this.warrantorReleasePrice + this.pledgeReleasePrice
       if (temp > 0) {
         for(var i = 0; i < this.companyNum; i++) {
-          this.originalBasisRecoveryRate += (temp / this.companyList[i].bondBalance);
+          this.companyList[i].originalBasisRecoveryRate = temp / this.companyList[i].bondBalance;
+          this.originalBasisRecoveryRate += this.companyList[i].originalBasisRecoveryRate;
         }
         this.originalBasisRecoveryRate = this.originalBasisRecoveryRate / this.companyNum;
       } else {
@@ -610,11 +613,15 @@ export default {
     },
     // 基础回收率（上限1.05）:如果【原始的基础回收率】小于1.05那么就等于原始的基础回收率，否则就等于1.05
     getBasisRecoveryRate() {
-      if (this.originalBasisRecoveryRate < 1.05) {
-        this.basisRecoveryRate = this.originalBasisRecoveryRate;
-      } else {
-        this.basisRecoveryRate = 1.05;
+      for(var i = 0; i < this.companyNum; i++) {
+        if (this.companyList[i].originalBasisRecoveryRate < 1.05){
+          this.companyList[i].basisRecoveryRate = this.companyList[i].originalBasisRecoveryRate;
+        } else {
+          this.companyList[i].basisRecoveryRate = 1.05;
+        }
+        this.basisRecoveryRate += this.companyList[i].basisRecoveryRate;
       }
+      this.basisRecoveryRate = this.basisRecoveryRate / this.companyNum;
     },
     // LGD值=1-基础回收率（上限1.05）*债务人特征调整系数*债项特征调整系数
     getLGDValue() {
