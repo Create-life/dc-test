@@ -5,15 +5,15 @@
       <div class="col-md-2 nav_item t-center">{{isCheck?'当前场景':'场景选择：'}}</div>
       <div class="col-md-9 nav_item row">
         <div class="col-md-4">
-          <b-form-input v-show="!isCheck" placeholder="发行人数量" class="nav_input" type="number" name="companyNum" v-model="companyNum"></b-form-input>
+          <b-form-input v-show="!isCheck" placeholder="发行人数量" class="nav_input" type="text" name="companyNum" v-model="companyNum"></b-form-input>
           <span v-show="isCheck">发行人数量：<span class="notice">{{companyNum}}</span></span>
         </div>
         <div class="col-md-4">
-          <b-form-input v-show="!isCheck" placeholder="担保人数量" type="number" name="guarantorNum" v-model="guarantorNum"></b-form-input>
+          <b-form-input v-show="!isCheck" placeholder="担保人数量" type="text" name="guarantorNum" v-model="guarantorNum"></b-form-input>
           <span v-show="isCheck">担保人数量：<span class="notice">{{guarantorNum}}</span></span>
         </div>
         <div class="col-md-4">
-          <b-form-input v-show="!isCheck" placeholder="抵质押品数量" type="number" name="pledgeNum" v-model="pledgeNum"></b-form-input>
+          <b-form-input v-show="!isCheck" placeholder="抵质押品数量" type="text" name="pledgeNum" v-model="pledgeNum"></b-form-input>
           <span v-show="isCheck">抵质押品数量：<span class="notice">{{pledgeNum}}</span></span>
         </div>
       </div>
@@ -23,71 +23,71 @@
       </div>
     </b-navbar>
 
-    <!-- 债项信息 -->
-    <b-navbar class="bond-info enter-list" v-if="bondTypeList">
-      <div class="col-md-2 nav_item t-center">债项信息：</div>
-      <div class="col-md-9 nav_item row" v-show="!bondTypeCheck">
-        <div class="col-md-4">
-          <label>债券余额：</label>
-          <b-form-input @change="resultInit" class="nav_input" type="number" name="Company_nature" v-model="bondBalance"></b-form-input>
-          <label>亿元</label>
-        </div>
-        <div class="col-md-8">
-          <label>债项类型：</label>
-          <b-form-select @change="resultInit" v-model="bondType" :options="bondTypeList.options" />
-          <span class="notice">{{bondType.ratio}}</span>
-        </div>
-      </div>
-      <div class="col-md-9 nav_item row" v-if="bondType" v-show="bondTypeCheck">
-        <div class="col-md-4">
-          <span>债券余额：</span>
-          <span class="notice">{{bondBalance?bondBalance:'-'}}</span>
-          <span>亿元</span>
-        </div>
-        <div class="col-md-8">
-          <label>债项类型：</label>
-          <span class="text-overflow">{{bondType.name}}</span>
-          <span class="notice">{{bondType.ratio}}</span>
-        </div>
-      </div>
-      <div class="col-md-1">
-        <b-button variant="outline-primary" v-show="!bondTypeCheck" @click="checkBondType">确定</b-button>
-        <b-button variant="outline-secondary" v-show="bondTypeCheck" @click="resetBondType">重置</b-button>
-      </div>
-    </b-navbar>
 
     <!-- 发行人信息 -->
     <b-navbar class="company-info enter-list" v-b-modal="`company${idx}`" v-if="companyList.length>0" v-for="(company, idx) in companyList" :key="company.id">
       <div class="col-md-2 nav_item t-center">发行人信息{{companyNum>1?idx+1:''}}：</div>
       <div class="col-md-10 nav_item info">
         <div class="row">
+          <div class="col-md-3">
+            <span>债券余额：</span>
+            <span class="notice">{{company.bondBalance?company.bondBalance:'-'}}</span>
+            <span>亿元</span>
+          </div>
+          <div class="col-md-3 flex" v-if="companyNum==1">
+            <label>发行人有效认定评级：</label>
+            <span class="notice">{{company.companyRating.rating}}</span>
+          </div>
+          <div class="col-md-3 flex" v-if="companyNum>1">
+            <label>发行人违约率：</label>
+            <span class="notice">{{company.companyPd?company.companyPd:'-'}}%</span>
+          </div>
           <div class="col-md-6 flex">
+            <label>债项类型：</label>
+            <span class="text-overflow" :title="company.bondType.name">{{company.bondType.name}}</span>
+            <span class="notice">{{company.bondType.ratio}}</span>
+          </div>
+
+          <div class="col-md-4 flex">
             <label>{{companyNatureList.factorName}}：</label>
             <span class="text-overflow" :title="company.companyNature.name">{{company.companyNature.name}}</span>
             <span class="notice">{{company.companyNature.ratio}}</span>
           </div>
-          <div class="col-md-6 flex">
+          <div class="col-md-4 flex">
             <label>{{industaryList.factorName}}：</label>
             <span class="text-overflow" :title="company.industary.name">{{company.industary.name}}</span>
             <span class="notice">{{company.industary.ratio}}</span>
           </div>
-          <div class="col-md-6 flex">
+          <div class="col-md-4 flex">
             <label>{{creditRegionList.factorName}}：</label>
             <span class="text-overflow" :title="company.creditRegion.name">{{company.creditRegion.name}}</span>
             <span class="notice">{{company.creditRegion.ratio}}</span>
-          </div>
-          <div class="col-md-6 flex" v-if="companyNum==1">
-            <label>发行人有效认定评级：</label>
-            <span class="notice">{{company.companyRating.rating}}</span>
-          </div>
-          <div class="col-md-6 flex" v-if="companyNum>1">
-            <label>发行人违约率：</label>
-            <span class="notice">{{company.companyPd?company.companyPd:'-'}}%</span>
           </div>
         </div>
       </div>
       <!-- 发行人模态框 -->
       <b-modal ref="companyModal" centered :id="`company${idx}`" hide-footer size="lg" :title="`发行人${companyNum>1?idx + 1:''}信息修改`">
+        <p class="my-1 flex">
+          <label>债券余额：</label>
+          <b-form-input @change="resultInit" class="nav_input" type="text" name="Company_nature" v-model="company.bondBalance"></b-form-input>
+          <span class="symbol">亿元</span>
+        </p>
+        <p class="my-1 flex" v-if="companyList.length==1">
+          <label>发行人有效认定评级：</label>
+          <b-form-select @change="resultInit" v-model="company.companyRating" :options="scaleList" />
+          <span class="notice"></span>
+        </p>
+        <p class="my-1 flex" v-if="companyList.length>1">
+          <label>发行人违约率：</label>
+          <b-form-input @change="resultInit" type="text" name="companyPd" v-model="company.companyPd"></b-form-input>
+          <span class="symbol">%</span>
+        </p>
+        <p class="my-1 flex">
+          <label>债项类型：</label>
+          <b-form-select @change="resultInit" v-model="company.bondType" :options="bondTypeList.options" />
+          <span class="notice">{{company.bondType.ratio}}</span>
+        </p>
+
         <p class="my-1 flex">
           <label>{{companyNatureList.factorName}}：</label>
           <b-form-select @change="resultInit" v-model="company.companyNature" :options="companyNatureList.options" />
@@ -102,16 +102,6 @@
           <label>{{creditRegionList.factorName}}：</label>
           <b-form-select @change="resultInit" v-model="company.creditRegion" :options="creditRegionList.options" />
           <span class="notice">{{company.creditRegion.ratio}}</span>
-        </p>
-        <p class="my-1 flex" v-if="companyList.length==1">
-          <label>发行人有效认定评级：</label>
-          <b-form-select @change="resultInit" v-model="company.companyRating" :options="scaleList" />
-          <span class="notice"></span>
-        </p>
-        <p class="my-1 flex" v-if="companyList.length>1">
-          <label>发行人违约率：</label>
-          <b-form-input @change="resultInit" type="number" name="companyPd" v-model="company.companyPd"></b-form-input>
-          <span class="notice"></span>
         </p>
         <b-btn class="mt-3" variant="outline-success" block @click="hideCompanyModal(idx)">OK</b-btn>
       </b-modal>
@@ -161,7 +151,7 @@
       <b-modal ref="warrantorModal" centered :id="`warrantor${idx}`" hide-footer size="lg" :title="`担保人${guarantorNum>1?idx + 1:''}信息修改`">
         <p class="my-1 flex">
           <label>担保金额：</label>
-          <b-form-input @change="resultInit" class="nav_input" type="number" name="warrantorPrice" v-model="warrantor.warrantorPrice"></b-form-input>
+          <b-form-input @change="resultInit" class="nav_input" type="text" name="warrantorPrice" v-model="warrantor.warrantorPrice"></b-form-input>
           <span class="notice"></span>
         </p>
 
@@ -172,7 +162,7 @@
         </p>
         <p class="my-1 flex" v-if="guarantorNum>1">
           <label>担保人违约率：</label>
-          <b-form-input @change="resultInit" type="number" v-model="warrantor.guarantorPd"></b-form-input>
+          <b-form-input @change="resultInit" type="text" v-model="warrantor.guarantorPd"></b-form-input>
           <span class="notice"></span>
         </p>
 
@@ -239,7 +229,7 @@
       <b-modal ref="pledgeModal" centered :id="`pledge${idx}`" hide-footer size="lg" :title="`抵质押品${pledgeNum>1?idx + 1:''}信息修改`">
         <p class="my-1 flex">
           <label>抵质押品金额：</label>
-          <b-form-input @change="resultInit" class="nav_input" type="number" name="pledgePrice" v-model="pledge.pledgePrice"></b-form-input>
+          <b-form-input @change="resultInit" class="nav_input" type="text" name="pledgePrice" v-model="pledge.pledgePrice"></b-form-input>
           <span class="notice"></span>
         </p>
         <!-- 执法环境 -->
@@ -345,7 +335,6 @@ export default {
       bondType: null, // 选取的债项类型
       bondTypeList: null,
       bondBalance: null, // 债券余额
-      bondTypeCheck: false, // 债项类型确认
 
 
       companyNatureList: null, // 股权结构
@@ -382,89 +371,80 @@ export default {
     };
   },
   created() {
-    axios({ url: "./static/data/company/BOND_TYPE.json" }).then(res => {
-      this.bondTypeList = res.data;
-      this.optionsEach(this.bondTypeList.options);
-      this.bondType = this.bondTypeList.options[0];
+    axios({url: "./static/data.json"}).then(res => {
+      var data = res.data;
+      for(var i = 0; i < data.length; i++) {
+        var item = data[i];
+        switch(item.factorCode) {
+          case 'BOND_TYPE':
+            this.bondTypeList = item;
+            this.optionsEach(this.bondTypeList.options);
+            this.bondType = this.bondTypeList.options[0];
+            break;
+          case 'CORP_NATURE':
+            this.companyNatureList = item;
+            this.optionsEach(this.companyNatureList.options);
+            this.companyNature = this.companyNatureList.options[0];
+            break;
+          case 'INDUSTRY':
+            this.industaryList = item;
+            this.optionsEach(this.industaryList.options);
+            this.industary = this.industaryList.options[0];
+            break;
+          case 'CREDIT_REGION':
+            this.creditRegionList = item;
+            this.optionsEach(this.creditRegionList.options);
+            this.creditRegion = this.creditRegionList.options[0];
+            break;
+          case 'WARRANTOR_TYPE':
+            this.warrantorTypeList = item;
+            this.optionsEach(this.warrantorTypeList.options);
+            this.warrantorType = this.warrantorTypeList.options[0];
+            break;
+          case 'WARRANTY_STRENGTH':
+            this.warrantyStrengthList = item;
+            this.optionsEach(this.warrantyStrengthList.options);
+            this.warrantyStrength = this.warrantyStrengthList.options[0];
+            break;
+          case 'GUARANTEE_TYPE':
+            this.guaranteeTypeList = item;
+            this.optionsEach(this.guaranteeTypeList.options);
+            this.guaranteeType = this.guaranteeTypeList.options[0];
+            break;
+          case 'PLEDGE_TYPE':
+            this.pledgeTypeList = item;
+            this.optionsEach(this.pledgeTypeList.options);
+            this.pledgeType = this.pledgeTypeList.options[0];
+            break;
+          case 'PLEDGE_CONTROL':
+            this.pledgeControlList = item;
+            this.optionsEach(this.pledgeControlList.options);
+            this.pledgeControl = this.pledgeControlList.options[0];
+            break;
+          case 'PLEDGE_REGION':
+            this.pledgeRegionList = item;
+            this.optionsEach(this.pledgeRegionList.options);
+            this.pledgeRegion = this.pledgeRegionList.options[0];
+            break;
+          case 'PLEDGE_DEPEND':
+            this.pledgeDependList = item;
+            this.optionsEach(this.pledgeDependList.options);
+            this.pledgeDepend = this.pledgeDependList.options[0];
+            break;
+          case 'LGD_LEVEL':
+            this.LGDRules = item;
+            break;
+          case 'SCALE_RATING':
+            this.scaleList = item.options;
+            this.scaleList.forEach(it => {
+              it.value = it;
+              it.text = it.rating;
+            });
+            break;
+          default: break;
+        }
+      }
     });
-    axios({ url: "./static/data/company/CORP_NATURE.json" }).then(res => {
-      this.companyNatureList = res.data;
-      this.optionsEach(this.companyNatureList.options);
-      this.companyNature = this.companyNatureList.options[0];
-    });
-    axios({ url: "./static/data/company/INDUSTRY.json" }).then(res => {
-      this.industaryList = res.data;
-      this.optionsEach(this.industaryList.options);
-      this.industary = this.industaryList.options[0];
-    });
-    axios({ url: "./static/data/company/CREDIT_REGION.json" }).then(
-      res => {
-        this.creditRegionList = res.data;
-        this.optionsEach(this.creditRegionList.options);
-        this.creditRegion = this.creditRegionList.options[0];
-      }
-    );
-    axios({ url: "./static/data/guarantor/WARRANTOR_TYPE.json" }).then(
-      res => {
-        this.warrantorTypeList = res.data;
-        this.optionsEach(this.warrantorTypeList.options);
-        this.warrantorType = this.warrantorTypeList.options[0];
-      }
-    );
-    axios({ url: "./static/data/guarantor/WARRANTY_STRENGTH.json" }).then(
-      res => {
-        this.warrantyStrengthList = res.data;
-        this.optionsEach(this.warrantyStrengthList.options);
-        this.warrantyStrength = this.warrantyStrengthList.options[0];
-      }
-    );
-    axios({ url: "./static/data/guarantor/GUARANTEE_TYPE.json" }).then(
-      res => {
-        this.guaranteeTypeList = res.data;
-        this.optionsEach(this.guaranteeTypeList.options);
-        this.guaranteeType = this.guaranteeTypeList.options[0];
-      }
-    );
-    axios({ url: "./static/data/pledge/PLEDGE_TYPE.json" }).then(res => {
-      this.pledgeTypeList = res.data;
-      this.optionsEach(this.pledgeTypeList.options);
-      this.pledgeType = this.pledgeTypeList.options[0];
-    });
-    axios({ url: "./static/data/pledge/PLEDGE_CONTROL.json" }).then(
-      res => {
-        this.pledgeControlList = res.data;
-        this.optionsEach(this.pledgeControlList.options);
-        this.pledgeControl = this.pledgeControlList.options[0];
-      }
-    );
-    axios({ url: "./static/data/pledge/PLEDGE_REGION.json" }).then(
-      res => {
-        this.pledgeRegionList = res.data;
-        this.optionsEach(this.pledgeRegionList.options);
-        this.pledgeRegion = this.pledgeRegionList.options[0];
-      }
-    );
-    axios({ url: "./static/data/pledge/PLEDGE_DEPEND.json" }).then(
-      res => {
-        this.pledgeDependList = res.data;
-        this.optionsEach(this.pledgeDependList.options);
-        this.pledgeDepend = this.pledgeDependList.options[0];
-      }
-    );
-    axios({ url: "./static/data/LGDRules.json" }).then(
-      res => {
-        this.LGDRules = res.data;
-      }
-    );
-    axios({ url: "./static/data/scales.json" }).then(
-      res => {
-        this.scaleList = res.data;
-        this.scaleList.forEach(it => {
-          it.value = it;
-          it.text = it.rating;
-        })
-      }
-    );
   },
   methods: {
     hidePledgeModal(idx) {
@@ -482,12 +462,6 @@ export default {
         it.text = it.name;
       })
     },
-    resetBondType() {
-      this.bondTypeCheck = false;
-    },
-    checkBondType() {
-      this.bondTypeCheck = true;
-    },
     reset() {
       this.isCheck = false;
       this.companyNum = null;
@@ -499,9 +473,9 @@ export default {
     },
     checkSelect() {
       this.isCheck = true;
-      this.companyNum = this.companyNum ? this.companyNum : 1;
-      this.pledgeNum = this.pledgeNum ? this.pledgeNum : 0;
-      this.guarantorNum = this.guarantorNum ? this.guarantorNum : 0;
+      this.companyNum = this.companyNum ? this.companyNum*1 : 1;
+      this.pledgeNum = this.pledgeNum ? this.pledgeNum*1 : 0;
+      this.guarantorNum = this.guarantorNum ? this.guarantorNum*1 : 0;
       this.modelInit();
     },
     // 获取场景
@@ -516,6 +490,8 @@ export default {
       for(var i = 0; i < this.companyNum; i++) {
         var companyObj = {
           id: `company${i}`,
+          bondBalance: null,
+          bondType: this.bondTypeList.options[0],
           companyNature: this.companyNatureList.options[0],
           industary: this.industaryList.options[0],
           creditRegion: this.creditRegionList.options[0],
@@ -591,7 +567,11 @@ export default {
     },
     // 债项特征调整系数:等于债项类型
     getBondFeatureAdjustCoefficient() {
-      this.bondFeatureAdjustCoefficient = this.bondType.ratio;
+      for(var i = 0; i< this.companyNum; i++) {
+        var company = this.companyList[i]
+        this.bondFeatureAdjustCoefficient += (company.bondType.ratio * 1) ;
+      }
+      this.bondFeatureAdjustCoefficient /= this.companyNum;
     },
     // 债务人特征调整系数=股权结构*发行人行业*信用环境
     getDebtorFeatureAdjustCoefficient() {
@@ -619,8 +599,11 @@ export default {
     // 原始的基础回收率:担保人缓释价值+抵质押品缓释价值大于0，那么就等于(担保人缓释价值+抵质押品缓释价值)/债券风险暴露EAD,否则就等于0.35
     getOriginalBasisRecoveryRate() {
       var temp = this.warrantorReleasePrice + this.pledgeReleasePrice
-      if ( temp > 0) {
-        this.originalBasisRecoveryRate = temp / this.bondBalance;
+      if (temp > 0) {
+        for(var i = 0; i < this.companyNum; i++) {
+          this.originalBasisRecoveryRate += (temp / this.companyList[i].bondBalance);
+        }
+        this.originalBasisRecoveryRate = this.originalBasisRecoveryRate / this.companyNum;
       } else {
         this.originalBasisRecoveryRate = 0.35;
       }
@@ -639,7 +622,7 @@ export default {
     },
     // LGD级别
     getLGDLevel() {
-      this.LGDRules.some(item => {
+      this.LGDRules.options.some(item => {
         if (this.LGDValue > item.lowBound && this.LGDValue <= item.upperBound) {
           this.LGDObj = item;
           return;
