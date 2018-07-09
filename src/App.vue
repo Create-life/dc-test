@@ -639,15 +639,23 @@ export default {
     // 债券基础评级：
     getCompanyBasisRating() {
       if (this.companyNum > 1) {
-        // 平均违约率
-        var averagePd = 0;
+        var arr = [];
         this.companyList.forEach(it => {
-          averagePd += it.companyPd * 1000;
+          if (it.companyPd !== null) {
+            arr.push(it);
+          }
         })
-        averagePd = averagePd / this.companyNum / 100000;
-        this.companyList[0].companyRating = this.scaleList.filter(it => { // 发行人评级
-          return averagePd > it.minValue && averagePd <= it.maxValue;
-        })[0];
+        if (arr.length!==0) {
+          // 平均违约率
+          var averagePd = 0;
+          arr.forEach(it => {
+            averagePd += it.companyPd * 1000;
+          })
+          averagePd = averagePd / arr.length / 100000;
+          this.companyList[0].companyRating = this.scaleList.filter(it => { // 发行人评级
+            return averagePd > it.minValue && averagePd <= it.maxValue;
+          })[0];
+        }
       }
       var temp = this.companyList[0].companyRating.id - this.LGDObj.adjust;
       if (temp < 1) {
@@ -659,17 +667,27 @@ export default {
     },
     // 担保人有效评级
     getGuaranterRating() {
+      console.log(this.warrantorList);
       if (this.guarantorNum > 0) {
         if (this.guarantorNum > 1) {
-          // 平均违约率
-          var averagePd = 0;
+          var arr = [];
           this.warrantorList.forEach(it => {
-            averagePd += it.guarantorPd * 1000;
+            if (it.guarantorPd !== null) {
+              arr.push(it);
+            }
           })
-          averagePd = averagePd / this.warrantorList.length / 100000;
-          this.warrantorList[0].guarantorRating = this.scaleList.filter(it => { // 发行人评级
-            return averagePd > it.minValue && averagePd <= it.maxValue;
-          })[0];
+          if (arr.length !== 0) {
+            // 平均违约率
+            var averagePd = 0;
+            arr.forEach(it => {
+              averagePd += it.guarantorPd * 1000;
+            })
+            averagePd = averagePd / arr.length / 100000;
+            this.warrantorList[0].guarantorRating = this.scaleList.filter(it => { // 发行人评级
+              return averagePd > it.minValue && averagePd <= it.maxValue;
+            })[0];
+          }
+
         }
         this.guarantorRating = this.warrantorList[0].guarantorRating;
       }
