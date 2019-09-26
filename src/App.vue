@@ -220,7 +220,7 @@
           <span>担保人有效评级</span> ：<span style="color: red;">{{guaranterRating}}</span>
         </div>
         <div class="form-group">
-          <span>最终评级</span> ：<span style="color: red;">{{finallyRating}}</span>
+          <span>债项最终评级</span> ：<span style="color: red;">{{finallyRating}}</span>
         </div>
       </div>
     </div>
