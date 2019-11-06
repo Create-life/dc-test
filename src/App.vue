@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="left">
-      <h2>债项型计算：</h2>
+      <h2>债项模型计算：</h2>
 
       <div>
         <h3 style="display: inline-block;">选择场景：</h3>
@@ -431,11 +431,11 @@ export default {
       }
       this.debtorFeatureAdjustCoefficient = temp / this.companyNum;
     },
-    // 抵质押品缓释价值=抵质押品价值*抵质押品类型*抵质押品控制力*抵质押品执法环境
+    // 抵质押品缓释价值=抵质押品价值*抵质押品类型*抵质押品控制力*抵质押品执法环境*抵质押物独立性
     getPledgeReleasePrice() {
       for(var i = 0;i < this.pledgeList.length; i++) {
         var item = this.pledgeList[i];
-        this.pledgeReleasePrice += item.pledgePrice * item.pledgeTypeRatio * item.pledgeControlRatio * item.pledgeRegionRatio;
+        this.pledgeReleasePrice += item.pledgePrice * item.pledgeTypeRatio * item.pledgeControlRatio * item.pledgeRegionRatio * item.pledgeDepend;
       }
     },
     // 担保人缓释价值=担保人类型*担保强度*担保价值*担保类型
