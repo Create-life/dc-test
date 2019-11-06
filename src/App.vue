@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="left">
-      <h2>债项模型计算：</h2>
+      <h2>债项型计算：</h2>
 
       <div>
         <h3 style="display: inline-block;">选择场景：</h3>
