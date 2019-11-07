@@ -588,7 +588,7 @@ export default {
     getPledgeReleasePrice() {
       for(var i = 0;i < this.pledgeList.length; i++) {
         var item = this.pledgeList[i];
-        this.pledgeReleasePrice += (item.pledgePrice * 1000) * (item.pledgeType.ratio * 1000) * (item.pledgeControl.ratio * 1000) * (item.pledgeRegion.ratio * 1000) / 1000000000000;
+        this.pledgeReleasePrice += (item.pledgePrice * 1000) * (item.pledgeType.ratio * 1000) * (item.pledgeControl.ratio * 1000) * (item.pledgeRegion.ratio * 1000) * (item.pledgeDepend.ratio * 1000) / 0001000000000000;
       }
     },
     // 担保人缓释价值=担保人类型*担保强度*担保价值*担保类型
